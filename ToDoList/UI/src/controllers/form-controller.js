@@ -17,11 +17,11 @@
     validate(form) {
 
         if (form.name == "authForm") {
-            console.log(form.name)
+          //  console.log(form.name)
         }
 
         if (form.name == "registration") {
-            console.log(form.name)
+           // console.log(form.name)
         }
 
     }
