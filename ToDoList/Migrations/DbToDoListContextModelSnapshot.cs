@@ -3,17 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ToDoList.Models;
+using ToDoList.Data;
 
 namespace ToDoList.Migrations
 {
-    [DbContext(typeof(ToDoListContext))]
-    [Migration("20191128183803_InitialCreate11")]
-    partial class InitialCreate11
+    [DbContext(typeof(DbToDoListContext))]
+    partial class DbToDoListContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,8 +32,6 @@ namespace ToDoList.Migrations
                     b.Property<string>("Email");
 
                     b.Property<string>("FirstName");
-
-                    b.Property<string>("Gender");
 
                     b.Property<string>("LastName");
 

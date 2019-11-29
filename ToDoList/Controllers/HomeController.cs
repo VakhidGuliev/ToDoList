@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ToDoList.Models;
-
-namespace ToDoList.Controllers
+﻿namespace ToDoList.Controllers
 {
+    using System.Diagnostics;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using Data;
+    using Models;
+
     public class HomeController : Controller
     {
-        public HomeController(ToDoListContext context)
+        public HomeController(DbToDoListContext context)
         {
             _context = context;
         }
-        private readonly ToDoListContext _context;
+        private readonly DbToDoListContext _context;
 
        
    
@@ -31,7 +27,7 @@ namespace ToDoList.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Birthday,Gender,Email,Phone,Password,ConfirmPassword,Id")]User user)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Birthday,Email,Phone,Password,ConfirmPassword,Id")]User user)
         {
             _context.Add(user);
             await _context.SaveChangesAsync();

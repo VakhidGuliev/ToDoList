@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Models;
+using ToDoList.Data;
 
 namespace ToDoList
 {
@@ -36,8 +37,8 @@ namespace ToDoList
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddDbContext<ToDoListContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("ToDoListContext")));
+            services.AddDbContext<DbToDoListContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DbToDoListContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
