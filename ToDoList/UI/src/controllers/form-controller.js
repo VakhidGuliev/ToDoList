@@ -30,7 +30,7 @@
                     },
                     lastName:{
                         required: true,
-                        minlength: 6,
+                        minlength: 4,
                         maxlength: 16,
                     },
                     birthday: {
@@ -51,14 +51,14 @@
                 },
                 messages:{
                     login:{
-                        required: "Это поле обязательно для заполнения",
-                        minlength: "Логин должен быть минимум 4 символа",
-                        maxlength: "Максимальное число символов - 16",
+                        required: "This field is required",
+                        minlength: "Login must be at least 4 characters",
+                        maxlength: "The maximum number of characters is 16",
                     },
                     password:{
-                        required: "Это поле обязательно для заполнения",
-                        minlength: "Пароль должен быть минимум 6 символа",
-                        maxlength: "Пароль должен быть максимум 16 символов",
+                        required: "This field is required",
+                        minlength: "Login must be at least 4 characters",
+                        maxlength: "The maximum number of characters is 16",
                     },
                 }
             })

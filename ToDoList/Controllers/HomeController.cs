@@ -22,9 +22,14 @@
               this.View(this.userService.GetAuthUsers());
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("FirstName,LastName,Birthday,Email,Phone,Password,ConfirmPassword,Id")]AuthUser authUser)
         {
-            this.userService.Create(authUser);
+            if (this.ModelState.IsValid)
+            {
+                this.userService.Create(authUser);
+            }
+
             return this.RedirectToAction(nameof(this.Index));
         }
 

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList.Models.DataAccess.Data;
 
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(DataToDoListContext))]
-    partial class DataToDoListContextModelSnapshot : ModelSnapshot
+    [Migration("20191130170039_InitialCreate5")]
+    partial class InitialCreate5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,7 +31,7 @@ namespace ToDoList.Migrations
 
                     b.Property<string>("ConfirmPassword")
                         .IsRequired()
-                        .HasMaxLength(16);
+                        .HasMaxLength(50);
 
                     b.Property<DateTime>("DateOfBirth");
 
@@ -39,15 +41,15 @@ namespace ToDoList.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(16);
+                        .HasMaxLength(50);
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(16);
+                        .HasMaxLength(50);
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(16);
+                        .HasMaxLength(50);
 
                     b.HasKey("Id");
 
