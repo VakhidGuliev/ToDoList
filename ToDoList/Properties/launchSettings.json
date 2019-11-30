@@ -16,7 +16,7 @@
       }
     },
     "ToDoList": {
-      "commandName": "Project",
+      "commandName": "Executable",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Release "
