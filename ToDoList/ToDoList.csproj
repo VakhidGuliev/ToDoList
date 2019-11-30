@@ -3,6 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+        <UserSecretsId>859b6f83-db61-439b-a252-d852655ac170</UserSecretsId>
+        <StartupObject>ToDoList.Program</StartupObject>
     </PropertyGroup>
 
 
