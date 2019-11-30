@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ToDoList.Data;
+using ToDoList.Models.DataAccess.Data;
 
 namespace ToDoList.Migrations
 {
-    [DbContext(typeof(DbToDoListContext))]
-    [Migration("20191129140819_InitialCreate1")]
-    partial class InitialCreate1
+    [DbContext(typeof(DataToDoListContext))]
+    [Migration("20191130122159_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,25 +21,28 @@ namespace ToDoList.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("ToDoList.Models.User", b =>
+            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Birthday");
+                    b.Property<string>("ConfirmPassword")
+                        .IsRequired();
 
-                    b.Property<string>("ConfirmPassword");
+                    b.Property<DateTime>("DateOfBirth");
 
-                    b.Property<string>("Email");
+                    b.Property<string>("Email")
+                        .IsRequired();
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired();
 
-                    b.Property<string>("LastName");
+                    b.Property<string>("LastName")
+                        .IsRequired();
 
-                    b.Property<string>("Password");
-
-                    b.Property<string>("Phone");
+                    b.Property<string>("Password")
+                        .IsRequired();
 
                     b.HasKey("Id");
 

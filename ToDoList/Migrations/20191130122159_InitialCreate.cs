@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ToDoList.Migrations
 {
-    public partial class InitialCreate1 : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,13 +14,12 @@ namespace ToDoList.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    Birthday = table.Column<DateTime>(nullable: false),
-                    Email = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: true),
-                    ConfirmPassword = table.Column<string>(nullable: true)
+                    Email = table.Column<string>(nullable: false),
+                    FirstName = table.Column<string>(nullable: false),
+                    LastName = table.Column<string>(nullable: false),
+                    Password = table.Column<string>(nullable: false),
+                    ConfirmPassword = table.Column<string>(nullable: false),
+                    DateOfBirth = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {

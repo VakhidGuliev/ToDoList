@@ -1,4 +1,4 @@
-﻿@model ToDoList.Models.User
+﻿@model ToDoList.Models.DataAccess.Dal.Entites.AuthUser
 
 <!DOCTYPE html>
 <html lang="en">
@@ -52,7 +52,7 @@
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
-                                    <label asp-for="Birthday" class="label">Birthday</label>
+                                    <label asp-for="DateOfBirth" class="label">Birthday</label>
                                     <div class="input-group-icon">
                                         <input class="input--style-4 js-datepicker" type="text" name="birthday" id="birthday">
                                         <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
@@ -67,13 +67,7 @@
                                     <input class="input--style-4" type="email" name="email" id="email">
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <div class="input-group">
-                                    <label asp-for="Phone" class="label">Phone Number</label>
-                                    <input class="input--style-4" type="text" name="phone" id="phone">
-                                </div>
-                            </div>
-                        </div>
+                          </div>
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">

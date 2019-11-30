@@ -1,54 +1,43 @@
 ﻿namespace ToDoList.Controllers
 {
     using System.Diagnostics;
-    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
-    using Data;
-    using Models;
+    using ToDoList.Models;
+    using ToDoList.Models.Business.Entites;
+    using ToDoList.Models.Business.Service.Interface;
+    using ToDoList.Models.DataAccess.Data;
 
     public class HomeController : Controller
     {
-        public HomeController(DbToDoListContext context)
-        {
-            _context = context;
-        }
-        private readonly DbToDoListContext _context;
+        private readonly IAuthUserService userService;
+        private readonly DataToDoListContext context;
 
-       
-   
-        public IActionResult Index()
+        public HomeController(IAuthUserService service, DataToDoListContext context)
         {
-            return View();
+            this.userService = service;
+            this.context = context;
         }
 
+        public IActionResult Index() =>
+              this.View(this.userService.GetAuthUsers());
 
-        // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Birthday,Email,Phone,Password,ConfirmPassword,Id")]User user)
+        public IActionResult Create([Bind("FirstName,LastName,Birthday,Email,Phone,Password,ConfirmPassword,Id")]AuthUser authUser)
         {
-            _context.Add(user);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            this.userService.Create(authUser);
+            return this.RedirectToAction(nameof(this.Index));
         }
 
+        public IActionResult Privacy() =>
+               this.View();
 
-        // Regitr
-        public IActionResult Privacy()
-        {
-            return View();
-        }
- 
-        public IActionResult Registration()
-        {
-            return View();
-        }
+        public IActionResult Registration() =>
+               this.View();
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
