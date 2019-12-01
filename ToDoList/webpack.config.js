@@ -1,7 +1,7 @@
 ﻿const path = require("path");
 
 module.exports = {
-    mode: "production",
+    mode: "dev",
     entry: {
         main: "./UI/src/main.js",
         },
