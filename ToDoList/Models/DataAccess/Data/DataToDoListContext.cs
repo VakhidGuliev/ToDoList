@@ -16,6 +16,6 @@ namespace ToDoList.Models.DataAccess.Data
 
         public DbSet<User> User { get; set; }
 
-        public DbSet<AuthUser> AuthUser { get; set; }
+        public DbSet<RegistrationUser> AuthUser { get; set; }
     }
 }

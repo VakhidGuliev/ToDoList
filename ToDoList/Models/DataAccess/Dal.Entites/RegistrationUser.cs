@@ -7,7 +7,7 @@ namespace ToDoList.Models.DataAccess.Dal.Entites
     using System;
     using System.ComponentModel.DataAnnotations;
 
-    public class AuthUser
+    public class RegistrationUser
     {
         public int Id { get; set; }
 

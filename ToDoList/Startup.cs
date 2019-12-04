@@ -31,8 +31,8 @@
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddTransient<IDataAuthUserService, DataService>();
-            services.AddTransient<IAuthUserService, UserService>();
+            services.AddTransient<IDataRegistrationUserService, RegistrationDataService>();
+            services.AddTransient<IRegistrationUserService, RegistrationUserService>();
             services.AddDbContext<DataToDoListContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DataToDoListContext")));
         }

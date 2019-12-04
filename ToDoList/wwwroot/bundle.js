@@ -115,50 +115,53 @@ __webpack_require__.r(__webpack_exports__);
 
         if (form.name === "registration") {
             console.log(form.name);
-            $(form).validate({
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                rules:{
-                    firstName:{
-                        required: true,
-                        minlength: 4,
-                        maxlength: 16,
-                    },
-                    lastName:{
-                        required: true,
-                        minlength: 6,
-                        maxlength: 16,
-                    },
-                    birthday: {
-                        required: true
-                    },
-                    email:{
-                        required:true
-                    },
-                    phone: {
-                        required: true
-                    },
-                    password: {
-                        required: true
-                    },
-                    confirmPassword: {
-                        required: true
-                    }
-                },
-                messages:{
-                    login:{
-                        required: "Это поле обязательно для заполнения",
-                        minlength: "Логин должен быть минимум 4 символа",
-                        maxlength: "Максимальное число символов - 16",
-                    },
-                    password:{
-                        required: "Это поле обязательно для заполнения",
-                        minlength: "Пароль должен быть минимум 6 символа",
-                        maxlength: "Пароль должен быть максимум 16 символов",
-                    },
-                }
-            })
+
+            form.submit();
+
+            //$(form).validate({
+            //    submitHandler: function(form) {
+            //        form.submit();
+            //    },
+            //    rules:{
+            //        firstName:{
+            //            required: true,
+            //            minlength: 4,
+            //            maxlength: 16,
+            //        },
+            //        lastName:{
+            //            required: true,
+            //            minlength: 4,
+            //            maxlength: 16,
+            //        },
+            //        birthday: {
+            //            required: true
+            //        },
+            //        email:{
+            //            required:true
+            //        },
+            //        phone: {
+            //            required: true
+            //        },
+            //        password: {
+            //            required: true
+            //        },
+            //        confirmPassword: {
+            //            required: true
+            //        }
+            //    },
+            //    messages:{
+            //        login:{
+            //            required: "This field is required",
+            //            minlength: "Login must be at least 4 characters",
+            //            maxlength: "The maximum number of characters is 16",
+            //        },
+            //        password:{
+            //            required: "This field is required",
+            //            minlength: "Login must be at least 4 characters",
+            //            maxlength: "The maximum number of characters is 16",
+            //        },
+            //    }
+            //})
         }
 
         if (form.name === "authForm") {

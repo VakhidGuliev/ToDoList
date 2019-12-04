@@ -12,16 +12,16 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
     using ToDoList.Models.DataAccess.Data;
 
-    public class DataService : IDataAuthUserService
+    public class RegistrationDataService : IDataRegistrationUserService
     {
         private readonly string connectionString;
 
-        public DataService(IConfiguration configuration)
+        public RegistrationDataService(IConfiguration configuration)
         {
             connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
 
-        public void Create(AuthUser user)
+        public void Create(RegistrationUser user)
         {
             using (var db = new DataToDoListContext(Options()))
             {
@@ -34,7 +34,7 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             }
         }
 
-        public List<AuthUser> GetAuthUsers()
+        public List<RegistrationUser> GetAuthUsers()
         {
             using (var db = new DataToDoListContext(Options()))
             {

@@ -7,10 +7,10 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Interface
     using System.Collections.Generic;
     using ToDoList.Models.DataAccess.Dal.Entites;
 
-    public interface IDataAuthUserService
+    public interface IDataRegistrationUserService
     {
-        void Create(AuthUser user);
+        void Create(RegistrationUser user);
 
-        List<AuthUser> GetAuthUsers();
+        List<RegistrationUser> GetAuthUsers();
     }
 }

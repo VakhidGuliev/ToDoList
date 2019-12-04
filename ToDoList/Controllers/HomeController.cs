@@ -9,10 +9,10 @@
 
     public class HomeController : Controller
     {
-        private readonly IAuthUserService userService;
+        private readonly IRegistrationUserService userService;
         private readonly DataToDoListContext context;
 
-        public HomeController(IAuthUserService service, DataToDoListContext context)
+        public HomeController(IRegistrationUserService service, DataToDoListContext context)
         {
             this.userService = service;
             this.context = context;
@@ -23,7 +23,7 @@
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("FirstName,LastName,Birthday,Email,Phone,Password,ConfirmPassword,Id")]AuthUser authUser)
+        public IActionResult Create([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]RegistrationUser authUser)
         {
             if (this.ModelState.IsValid)
             {

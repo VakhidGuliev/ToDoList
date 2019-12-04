@@ -12,16 +12,16 @@ namespace ToDoList.Models.Business.Service.Implementation
     using ToDoList.Models.Business.Service.Interface;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
 
-    public class UserService : IAuthUserService
+    public class RegistrationUserService : IRegistrationUserService
     {
-        private readonly IDataAuthUserService dataService;
+        private readonly IDataRegistrationUserService dataService;
 
-        public UserService(IDataAuthUserService dataService)
+        public RegistrationUserService(IDataRegistrationUserService dataService)
         {
             this.dataService = dataService;
         }
 
-        public void Create(AuthUser authUser)
+        public void Create(RegistrationUser authUser)
         {
             var today = DateTime.Today;
 
@@ -30,9 +30,9 @@ namespace ToDoList.Models.Business.Service.Implementation
             this.dataService.Create(user);
         }
 
-        public List<AuthUser> GetAuthUsers()
+        public List<RegistrationUser> GetAuthUsers()
         {
-            List<DataAccess.Dal.Entites.AuthUser> data = this.dataService.GetAuthUsers();
+            List<DataAccess.Dal.Entites.RegistrationUser> data = this.dataService.GetAuthUsers();
             var today = DateTime.Today;
             return data.Select(dbData => UserConverter.FromDalToBl(dbData, today)).ToList();
         }

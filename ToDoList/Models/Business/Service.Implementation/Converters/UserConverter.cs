@@ -1,7 +1,7 @@
 ﻿namespace ToDoList.Models.Business.Service.Implementation.Converters
 {
     using System;
-    using AuthUser = ToDoList.Models.Business.Entites.AuthUser;
+    using RegistrationUser = ToDoList.Models.Business.Entites.RegistrationUser;
 
     public class UserConverter
     {
@@ -15,8 +15,8 @@
                Age = today.Year - user.DateOfBirth.Year
            };
 
-        public static AuthUser FromDalToBl(DataAccess.Dal.Entites.AuthUser authUser, DateTime today) =>
-          new AuthUser
+        public static RegistrationUser FromDalToBl(DataAccess.Dal.Entites.RegistrationUser authUser, DateTime today) =>
+          new RegistrationUser
           {
               Email = authUser.Email,
               FirstName = authUser.FirstName,
@@ -27,8 +27,8 @@
               ConfirmPassword = authUser.ConfirmPassword,
           };
 
-        public static DataAccess.Dal.Entites.AuthUser FromBlToDl(AuthUser authUser, DateTime today) =>
-       new DataAccess.Dal.Entites.AuthUser
+        public static DataAccess.Dal.Entites.RegistrationUser FromBlToDl(RegistrationUser authUser, DateTime today) =>
+       new DataAccess.Dal.Entites.RegistrationUser
        {
            Email = authUser.Email,
            FirstName = authUser.FirstName,

@@ -7,10 +7,10 @@ namespace ToDoList.Models.Business.Service.Interface
     using System.Collections.Generic;
     using ToDoList.Models.Business.Entites;
 
-    public interface IAuthUserService
+    public interface IRegistrationUserService
     {
-        void Create(AuthUser authUser);
+        void Create(RegistrationUser authUser);
 
-        List<AuthUser> GetAuthUsers();
+        List<RegistrationUser> GetAuthUsers();
     }
     }

@@ -6,7 +6,7 @@ namespace ToDoList.Models.Business.Entites
 {
     using System;
 
-    public class AuthUser
+    public class RegistrationUser
     {
         public string FirstName { get; set; }
 
