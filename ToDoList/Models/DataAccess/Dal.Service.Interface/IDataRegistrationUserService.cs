@@ -11,6 +11,6 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Interface
     {
         void Create(RegistrationUser user);
 
-        List<RegistrationUser> GetAuthUsers();
+        List<RegistrationUser> GetRegistrationUsers();
     }
 }

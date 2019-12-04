@@ -25,20 +25,20 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
         {
             using (var db = new DataToDoListContext(Options()))
             {
-                if (!db.AuthUser.Contains(user))
+                if (!db.RegistrationUsers.Contains(user))
                 {
-                    db.AuthUser.Add(user);
+                    db.RegistrationUsers.Add(user);
                     db.SaveChanges();
                 }
 
             }
         }
 
-        public List<RegistrationUser> GetAuthUsers()
+        public List<RegistrationUser> GetRegistrationUsers()
         {
             using (var db = new DataToDoListContext(Options()))
             {
-                return db.AuthUser.ToList();
+                return db.RegistrationUsers.ToList();
             }
         }
 

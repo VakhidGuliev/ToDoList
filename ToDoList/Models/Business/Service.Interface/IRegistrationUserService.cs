@@ -11,6 +11,6 @@ namespace ToDoList.Models.Business.Service.Interface
     {
         void Create(RegistrationUser authUser);
 
-        List<RegistrationUser> GetAuthUsers();
+        List<RegistrationUser> GetRegistrationUsers();
     }
     }

@@ -30,9 +30,9 @@ namespace ToDoList.Models.Business.Service.Implementation
             this.dataService.Create(user);
         }
 
-        public List<RegistrationUser> GetAuthUsers()
+        public List<RegistrationUser> GetRegistrationUsers()
         {
-            List<DataAccess.Dal.Entites.RegistrationUser> data = this.dataService.GetAuthUsers();
+            List<DataAccess.Dal.Entites.RegistrationUser> data = this.dataService.GetRegistrationUsers();
             var today = DateTime.Today;
             return data.Select(dbData => UserConverter.FromDalToBl(dbData, today)).ToList();
         }

@@ -19,7 +19,7 @@
         }
 
         public IActionResult Index() =>
-              this.View(this.userService.GetAuthUsers());
+              this.View(this.userService.GetRegistrationUsers());
 
         [HttpPost]
         [ValidateAntiForgeryToken]
