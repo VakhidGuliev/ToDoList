@@ -16,7 +16,6 @@
 
 
     <ItemGroup>
-      <Folder Include="Models\DataAccess\Data\Scripts\" />
       <Folder Include="UI\src\components" />
     </ItemGroup>
 
