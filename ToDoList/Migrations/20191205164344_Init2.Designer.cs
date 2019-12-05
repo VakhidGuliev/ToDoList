@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList.Models.DataAccess.Data;
 
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(DataToDoListContext))]
-    partial class DataToDoListContextModelSnapshot : ModelSnapshot
+    [Migration("20191205164344_Init2")]
+    partial class Init2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,8 +73,6 @@ namespace ToDoList.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountId");
-
                     b.Property<DateTime>("DateOfBirth");
 
                     b.Property<string>("Email");
@@ -83,16 +83,7 @@ namespace ToDoList.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.User", b =>
-                {
-                    b.HasOne("ToDoList.Models.DataAccess.Dal.Entites.Account")
-                        .WithMany("User")
-                        .HasForeignKey("AccountId");
                 });
 #pragma warning restore 612, 618
         }

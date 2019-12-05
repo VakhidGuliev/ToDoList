@@ -3,32 +3,23 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList.Models.DataAccess.Data;
 
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(DataToDoListContext))]
-    partial class DataToDoListContextModelSnapshot : ModelSnapshot
+    [Migration("20191205163908_Init1")]
+    partial class Init1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.Account", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Accounts");
-                });
 
             modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.RegistrationUser", b =>
                 {
@@ -71,8 +62,6 @@ namespace ToDoList.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountId");
-
                     b.Property<DateTime>("DateOfBirth");
 
                     b.Property<string>("Email");
@@ -83,16 +72,7 @@ namespace ToDoList.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.User", b =>
-                {
-                    b.HasOne("ToDoList.Models.DataAccess.Dal.Entites.Account")
-                        .WithMany("User")
-                        .HasForeignKey("AccountId");
                 });
 #pragma warning restore 612, 618
         }

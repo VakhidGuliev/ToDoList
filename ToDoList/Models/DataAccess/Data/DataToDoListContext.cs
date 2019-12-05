@@ -17,5 +17,6 @@ namespace ToDoList.Models.DataAccess.Data
         public DbSet<User> Users { get; set; }
 
         public DbSet<RegistrationUser> RegistrationUsers { get; set; }
+        public DbSet<Account> Accounts { get; set; }
     }
 }
