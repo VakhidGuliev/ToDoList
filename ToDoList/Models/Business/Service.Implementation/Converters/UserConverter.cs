@@ -38,5 +38,22 @@
            Password = authUser.Password,
            ConfirmPassword = authUser.ConfirmPassword,
        };
+        public static Entites.Authentication FromDalToBl(DataAccess.Dal.Entites.Authentication registrationUser) {
+            return new Entites.Authentication
+            {
+                Email = registrationUser.Email,
+                Password = registrationUser.Password
+            };
+
+        }
+        public static DataAccess.Dal.Entites.Authentication FromBlToDal(Entites.Authentication registrationUser)
+        {
+            return new DataAccess.Dal.Entites.Authentication
+            {
+                Email = registrationUser.Email,
+                Password = registrationUser.Password
+            };
+
+        }
     }
 }

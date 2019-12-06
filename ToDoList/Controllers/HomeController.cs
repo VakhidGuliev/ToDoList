@@ -9,17 +9,21 @@
 
     public class HomeController : Controller
     {
-        private readonly IRegistrationUserService userService;
+        private readonly IRegistrationUserService _userService;
+        private readonly IAuthenticationService _authenticationsService;
         private readonly DataToDoListContext context;
 
-        public HomeController(IRegistrationUserService service, DataToDoListContext context)
+        public HomeController(IRegistrationUserService service,
+                              IAuthenticationService authenticationsService,
+                              DataToDoListContext context)
         {
-            this.userService = service;
+            this._userService = service;
+            this._authenticationsService = authenticationsService;
             this.context = context;
         }
 
         public IActionResult Index() =>
-              this.View(this.userService.GetRegistrationUsers());
+              this.View(this._userService.GetRegistrationUsers());
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -27,10 +31,18 @@
         {
             if (this.ModelState.IsValid)
             {
-                this.userService.Create(authUser);
+                this._userService.Create(authUser);
             }
 
             return this.RedirectToAction(nameof(this.Index));
+        }
+
+        [HttpPost]
+
+        public IActionResult SignIn([Bind("Email", "Password")]string email, string password)
+        {
+            this._authenticationsService.SignIn(email, password);
+            return this.View();
         }
 
         public IActionResult Privacy() =>
