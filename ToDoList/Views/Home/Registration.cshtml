@@ -54,8 +54,7 @@
                                 <div class="input-group">
                                     <label asp-for="DateOfBirth" class="label">Birthday</label>
                                     <div class="input-group-icon">
-                                        <input class="input--style-4 js-datepicker" type="text" name="birthday" id="birthday">
-                                        <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                                        <input class="input--style-4" type="text" name="birthday" id="birthday">
                                     </div>
                                 </div>
                             </div>
@@ -63,6 +62,7 @@
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
+                                  
                                     <label asp-for="Email" class="label">Email</label>
                                     <input class="input--style-4" type="email" name="email" id="email">
                                 </div>
@@ -71,19 +71,21 @@
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
+                                 
                                     <label asp-for="Password" class="label">Password</label>
                                     <input class="input--style-4" type="password" name="password" id="password">
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="input-group">
+                                 
                                     <label asp-for="ConfirmPassword" class="label">Confirm password</label>
                                     <input class="input--style-4" type="password" name="confirmPassword" id="confirmPassword">
                                 </div>
                             </div>
                         </div>
                         <div class="p-t-15">
-                            <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                            <button class="btn btn--radius-2 btn--blue disabled" type="submit" disabled>Submit</button>
                         </div>
                     </form>
                 </div>
@@ -91,12 +93,6 @@
         </div>
     </div>
 
-
-
-
-    <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.3.3/firebase-auth.js"></script>
 
 
 

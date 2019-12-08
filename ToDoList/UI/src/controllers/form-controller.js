@@ -1,34 +1,35 @@
 ﻿import { log } from "util";
+import ValidateService from "../services/validate-service";
+
 
 class FormController {
+    
     constructor(form) {
-        this.form = form;
+         this.form = form;
+         this.formData = new FormData(form)
     }
 
     submit() {
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
-
-            const currentForm = e.target;
-
-            this.validate(currentForm)
             
+            this.validate();
         })
     }
 
-    validate(form) {
-
-        if (form.name === "registration") {
-       
-            form.submit();
-
-      
-        }
-
-        if (form.name === "authForm") {
-            console.log(form);
-            form.submit();
-        }
+    validate() {
+        
+        this.form.addEventListener(`change`, ()=> {
+            
+            const validateService = new ValidateService();
+            
+            if (this.form.name === "registration") {
+                validateService.registration();
+            }
+            if (this.form.name === "authForm") {
+                validateService.auth();
+            }
+        });
     }
 }
 

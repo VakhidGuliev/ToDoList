@@ -97,37 +97,39 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 /* harmony import */ var util__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _services_validate_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/validate-service */ "./UI/src/services/validate-service.js");
 ﻿
 
+
+
 class FormController {
+    
     constructor(form) {
-        this.form = form;
+         this.form = form;
+         this.formData = new FormData(form)
     }
 
     submit() {
         this.form.addEventListener('submit', (e) => {
             e.preventDefault();
-
-            const currentForm = e.target;
-
-            this.validate(currentForm)
             
+            this.validate();
         })
     }
 
-    validate(form) {
-
-        if (form.name === "registration") {
-       
-            form.submit();
-
-      
-        }
-
-        if (form.name === "authForm") {
-            console.log(form);
-            form.submit();
-        }
+    validate() {
+        
+        this.form.addEventListener(`change`, ()=> {
+            
+            const validateService = new _services_validate_service__WEBPACK_IMPORTED_MODULE_1__["default"]();
+            
+            if (this.form.name === "registration") {
+                validateService.registration();
+            }
+            if (this.form.name === "authForm") {
+                validateService.auth();
+            }
+        });
     }
 }
 
@@ -146,8 +148,148 @@ class FormController {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_form_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/form-controller */ "./UI/src/controllers/form-controller.js");
 ﻿
-new _controllers_form_controller__WEBPACK_IMPORTED_MODULE_0__["default"](document.querySelector('form')).submit();
 
+
+const form = document.querySelector('form');
+const formController = new _controllers_form_controller__WEBPACK_IMPORTED_MODULE_0__["default"](form);
+
+formController.validate();
+formController.submit();
+
+$('input[name="birthday"]').daterangepicker({
+    "singleDatePicker": true,
+    "showDropdowns": true,
+    "minYear": 1900,
+    "maxYear": 2019,
+    "startDate": "01/01/1900",
+    "minDate": "01/01/1990",
+    "maxDate": "12/07/2019",
+}, function (start, end, label) {
+    console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+});
+
+/***/ }),
+
+/***/ "./UI/src/services/validate-service.js":
+/*!*********************************************!*\
+  !*** ./UI/src/services/validate-service.js ***!
+  \*********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class ValidateService {
+    constructor(){}
+    
+    registration(){
+        
+        const form = document.forms.namedItem('registration');
+        const btnSend = form.querySelector("button[type=submit]");
+
+        console.log('test')
+
+        
+        $(form).validate({
+            rules: {
+                firstName: {
+                    required: true,
+                    rangelength :[2,10]
+                },
+                lastName: {
+                    required: true,
+                    rangelength :[2,15]
+                },
+                date:{
+                  required:true,
+                     date: true
+                },
+                email:{
+                  required :true,
+                  email: true  
+                },
+                password : {
+                    required:true,
+                    rangelength:[6,50],
+                    
+                    
+                },
+                confirmPassword: {
+                   required:true,
+                    equalTo : "#password"
+                    
+                }
+            },
+            messages: {
+                firstName: {
+                    required:"Please enter your first name",
+                    rangelength: "Login format not valid",
+                   },
+                lastName: {
+                    required:"Please enter your last name",
+                    rangelength: "Login format not valid",
+                },
+                email : {
+                    required:"Please input your email"
+                },
+                password:{
+                    required:"Please enter your password",
+                    
+                },
+                confirmPassword: {
+                    required:"Please enter confirmPassword",
+                    equalTo: "Password and Confirm password  dont match"
+                }
+            },
+            submitHandler: function (form) {
+                form.submit();
+                return false;
+            }
+        });
+
+        if ($(form).valid()) {
+            $(btnSend).removeClass('disabled');
+            $(btnSend).removeAttr('disabled');
+        }
+    };
+    
+    
+    auth(){
+        const form = document.forms.namedItem('authForm');
+
+
+        $(form).validate({
+            rules: {
+              
+                email:{
+                    required :true,
+                    email: true
+                },
+                password : {
+                    required:true,
+                 }
+                
+            },
+            messages: {
+               
+                email : {
+                    required:"Please input your email"
+                },
+                password:{
+                    required:"Please enter your password",
+
+                }
+               
+            },
+            submitHandler: function (form) {
+                form.submit();
+                return false;
+            }
+        });
+    };
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (ValidateService);
 
 /***/ }),
 

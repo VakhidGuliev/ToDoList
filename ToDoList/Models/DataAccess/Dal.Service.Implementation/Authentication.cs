@@ -7,7 +7,6 @@
     using ToDoList.Models.DataAccess.Data;
     using System.Linq;
     using ToDoList.Models.DataAccess.Dal.Entites;
-    using ToDoList.Models.Business.Service.Implementation.Converters;
 
     public class Authentication : IDataAuthentication
     {
@@ -17,7 +16,29 @@
         {
             connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
-      
+
+        public bool SignIn(string email, string password)
+        {
+            using (var db = new DataToDoListContext(Options()))
+            {
+                RegistrationUser user = db.RegistrationUsers.FirstOrDefault(x => (x.Email == email) && x.Password == password);
+                 var authUserEmail = user.Email;
+              
+                 var  authUserPassword= user.Password;
+                if (authUserEmail ==null ||authUserEmail ==null)
+                {
+                    return false;
+                }
+
+                if (authUserEmail.Equals(email) && authUserPassword.Equals(password))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
         private DbContextOptions<DataToDoListContext> Options()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataToDoListContext>();
@@ -26,23 +47,5 @@
             return options;
         }
 
-         bool IDataAuthentication.SignIn(string email, string password)
-        {
-            using (var db = new DataToDoListContext(Options()))
-            {
-                RegistrationUser user = db.RegistrationUsers.FirstOrDefault(x => (x.Email == email) && x.Password == password);
-                var authUserEmail = user.Email;
-                var authUserPassword = user.Password;
-
-                if (authUserEmail.Equals(email) && authUserPassword.Equals(password))
-                {
-                    return true;
-                }
-                else
-                {
-                    throw new Exception("This User is not exit");
-                }
-            }
-        }
     }
 }
