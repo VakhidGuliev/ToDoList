@@ -1,9 +1,8 @@
-﻿using ToDoList.Models.Business.Entites;
-
-namespace ToDoList.Models.Business.Service.Interface
+﻿namespace ToDoList.Models.Business.Service.Interface
 {
-    public interface IAuthenticationService
-    {
-        bool SignIn(string email, string password);
-    }
+    // Not using
+    // public interface IAuthenticationService
+    // {
+    //    bool SignIn(string email, string password);
+    // }
 }

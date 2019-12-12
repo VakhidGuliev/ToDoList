@@ -1,4 +1,4 @@
-﻿@model ToDoList.Models.DataAccess.Dal.Entites.RegistrationUser
+﻿@model ToDoList.Models.DataAccess.Dal.Entites.User
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +34,7 @@
             <div class="card card-4">
                 <div class="card-body">
                     <h2 class="title">Registration Form</h2>
-                    <form method="POST" name="registration" id="registration" asp-action="Create">
+                    <form method="POST" name="registration" id="registration" asp-action="CreateUser">
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
@@ -54,15 +54,12 @@
                                 <div class="input-group">
                                     <label asp-for="DateOfBirth" class="label">Birthday</label>
                                     <div class="input-group-icon">
-                                        <input class="input--style-4" type="text" name="birthday" id="birthday">
+                                        <input class="input--style-4" type="date" name="birthday" id="birthday">
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
-                                  
                                     <label asp-for="Email" class="label">Email</label>
                                     <input class="input--style-4" type="email" name="email" id="email">
                                 </div>
@@ -71,14 +68,13 @@
                         <div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
-                                 
                                     <label asp-for="Password" class="label">Password</label>
                                     <input class="input--style-4" type="password" name="password" id="password">
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="input-group">
-                                 
+
                                     <label asp-for="ConfirmPassword" class="label">Confirm password</label>
                                     <input class="input--style-4" type="password" name="confirmPassword" id="confirmPassword">
                                 </div>
@@ -94,7 +90,7 @@
     </div>
 
 
-
+    <script src="~/main.bundle.js"></script>>
 
     <!-- Jquery JS-->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

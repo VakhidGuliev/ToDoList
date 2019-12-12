@@ -1,0 +1,52 @@
+﻿@model ToDoList.Models.DataAccess.Dal.Entites.User
+@{
+    ViewData["Title"] = "Login";
+}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Login</title>
+    <link rel="stylesheet" href="~/css/auth.css"/>
+</head>
+<body>
+
+    <div id="wrapper">
+        <div class="user-icon"></div>
+        <div class="pass-icon"></div>
+        <form asp-antiforgery="true" asp-action="login" method="post" name="authForm" id="authForm" class="login-form">
+            <div class="header">
+                <h1>Authentication</h1>
+                <span class="message">Enter your registration data to enter your personal account.</span>
+            </div>
+            <div class="content">
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+                <div>
+                    <label asp-for="Email">
+                        <input name="email" id="email" type="email" class="input email" asp-for="Email"
+                               placeholder="email" />
+                        <span asp-validation-for="Email"></span>
+                    </label>
+                </div>
+                <div>
+                    <label asp-for="Password">
+                        <input name="password" id="password" type="password" class="input password" asp-for="Password"
+                               placeholder="password" />
+                        <span asp-validation-for="Password"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="footer">
+                <button type="submit" id="authBtn" value="LogIn" class="button disabled" disabled="disabled">SignIn</button>
+                <a asp-action="Registration" class="register">Registration</a>
+            </div>
+        </form>
+    </div>
+    <div class="gradient"></div>
+
+
+    <script src="~/main.bundle.js"></script>
+</body>
+</html>
+

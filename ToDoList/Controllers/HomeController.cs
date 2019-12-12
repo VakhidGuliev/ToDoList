@@ -1,85 +1,61 @@
 ﻿namespace ToDoList.Controllers
 {
     using System.Diagnostics;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using ToDoList.Models;
     using ToDoList.Models.Business.Entites;
     using ToDoList.Models.Business.Service.Interface;
+
     using ToDoList.Models.DataAccess.Data;
 
     public class HomeController : Controller
     {
-        private readonly IRegistrationUserService _registrationUserService;
-        private readonly IAuthenticationService _authenticationsService;
         private readonly DataToDoListContext context;
+        private readonly ICategoryService dataCategoryService;
 
-        public HomeController(IRegistrationUserService registrationUserService,
-                              IAuthenticationService authenticationsService,
-                              DataToDoListContext context)
+        public HomeController(DataToDoListContext context, ICategoryService categoryService)
         {
-            this._registrationUserService = registrationUserService;
-            this._authenticationsService = authenticationsService;
             this.context = context;
+            this.dataCategoryService = categoryService;
         }
 
-        public IActionResult Index() =>
-              this.View(this._registrationUserService.GetRegistrationUsers());
+        [Authorize(Roles = "Admin,User")]
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]RegistrationUser authUser)
+        public IActionResult Index()
         {
-
-
-            if (string.IsNullOrEmpty(authUser.Email))
-            {
-                ModelState.AddModelError(authUser.Email, "Not correct  email");
-            }
-            else if (string.IsNullOrEmpty(authUser.Password))
-            {
-                ModelState.AddModelError(authUser.Password, "Not correct password");
-            }
-
-            if (this.ModelState.IsValid)
-            {
-                ViewBag.Message = "Validation Passed";
-                this._registrationUserService.Create(authUser);
-
-            }
-            ViewBag.Message = "Request failed validation";
-
-            return this.RedirectToAction(nameof(this.Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult SignIn([Bind("Email", "Password")]string email, string password)
-        {
-
-            if (string.IsNullOrEmpty(email))
-            {
-                ModelState.AddModelError(email, "Not correct  email");
-            }
-            else if (string.IsNullOrEmpty(password))
-            {
-                ModelState.AddModelError(password, "Not correct password");
-            }
-
-
-            ViewBag.Message = "Request failed validation";
-            this._authenticationsService.SignIn(email, password);
             return this.View();
         }
-        public IActionResult Privacy() =>
-               this.View();
+ 
+        [HttpPost]
 
-        public IActionResult Registration() =>
-               this.View();
+        public IActionResult CreateCategory( Category category )
+        {
+            var isChek = this.dataCategoryService.CreateCategory(category);
+            if (!isChek)
+            {
+
+                return BadRequest($"Name { category.Name} is already in use.");
+            }
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "Admin")]
+
+        public IActionResult Setting()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
         }
     }
 }

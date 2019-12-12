@@ -2,9 +2,9 @@
 {
     using System.Collections.Generic;
 
+    // Not using
     public class Account
     {
-
-        Dictionary<int, User> UsersAcounts { get; set; }
+        private Dictionary<int, User> UsersAcounts { get; set; }
     }
 }

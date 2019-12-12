@@ -196,3 +196,19 @@ a.list-group-item {
 .md-form label.active {
     transform: translateY(0px) scale(.8) !important;
 }
+
+div#ListModal.fade.in {
+    opacity: 1;
+}
+
+span.valid-feedback {
+    display: none;
+    font-size: 100% !important;
+    font-weight: bold;
+    color:green;
+}
+
+span.invalid-feedback {
+    font-size: 100% !important;
+    font-weight: bold;
+}

@@ -4,9 +4,10 @@ module.exports = {
     mode: "development",
     entry: {
         main: "./UI/src/main.js",
+        app:  "./UI/src/app.js",
         },
     output: {
-        filename: `bundle.js`,
+        filename: `[name].bundle.js`,
         path: path.join(__dirname, "wwwroot")
     },
     // module: {

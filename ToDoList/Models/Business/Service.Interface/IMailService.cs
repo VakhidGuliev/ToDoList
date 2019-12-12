@@ -1,9 +1,11 @@
 ﻿namespace ToDoList.Models.Business.Service.Interface
 {
 
-    using System.IO;
+    // using System.IO;
+    //Not using
 
-    public interface IMailService
+    #region IMailService
+  /*  public interface IMailService
     {
         /// <summary>
         ///     Sends the specified to.
@@ -26,4 +28,6 @@
         /// <param name="isBodyHtml">if set to <c>true</c> [is body HTML].</param>
         void Send(string to, string subject, string body, MemoryStream attachment, bool isBodyHtml = false);
     }
+    */
+    #endregion
 }

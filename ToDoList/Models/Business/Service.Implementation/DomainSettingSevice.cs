@@ -1,4 +1,6 @@
-﻿//using Microsoft.Extensions.Logging;
+﻿// Not using
+
+//using Microsoft.Extensions.Logging;
 //using System.Collections.Generic;
 //using System.Linq;
 //using ToDoList.Models.Business.Service.Interface;
@@ -21,7 +23,7 @@
 //            get { return genericSettings.ReadString("ApplicationName"); }
 //        }
 
-       
+
 
 //        public string SmtpServer
 //        {
@@ -58,9 +60,9 @@
 //            get { return genericSettings.ReadString("MercerFlowEmailSender"); }
 //        }
 
-    
 
-        
+
+
 
 //        public string CPMarketplaceOEDateChangesEmailList
 //        {
@@ -79,7 +81,7 @@
 
 
 
-       
+
 
 //        public IDictionary<string, string> DefectFileLoadingAccountInfo
 //        {

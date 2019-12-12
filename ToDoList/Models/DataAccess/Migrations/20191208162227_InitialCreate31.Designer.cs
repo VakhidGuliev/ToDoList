@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList.Models.DataAccess.Data;
 
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(DataToDoListContext))]
-    partial class DataToDoListContextModelSnapshot : ModelSnapshot
+    [Migration("20191208162227_InitialCreate31")]
+    partial class InitialCreate31
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,11 +32,13 @@ namespace ToDoList.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.RegistrationUser", b =>
+            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("AccountId");
 
                     b.Property<int>("Age");
 
@@ -59,27 +63,6 @@ namespace ToDoList.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(16);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RegistrationUsers");
-                });
-
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AccountId");
-
-                    b.Property<DateTime>("DateOfBirth");
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("FirstName");
-
-                    b.Property<string>("LastName");
 
                     b.HasKey("Id");
 

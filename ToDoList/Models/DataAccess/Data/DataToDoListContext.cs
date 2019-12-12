@@ -1,12 +1,9 @@
-﻿// <copyright file="DataToDoListContext.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
-namespace ToDoList.Models.DataAccess.Data
+﻿namespace ToDoList.Models.DataAccess.Data
 {
     using Microsoft.EntityFrameworkCore;
     using ToDoList.Models.DataAccess.Dal.Entites;
 
+    #region DataToDoListContext
     public class DataToDoListContext : DbContext
     {
         public DataToDoListContext(DbContextOptions<DataToDoListContext> options)
@@ -15,9 +12,10 @@ namespace ToDoList.Models.DataAccess.Data
         }
 
         public DbSet<User> Users { get; set; }
-
-        public DbSet<RegistrationUser> RegistrationUsers { get; set; }
         public DbSet<Account> Accounts { get; set; }
-        public DbSet<Authentication> Authentications { get; set; }
+        public DbSet<AppRole> Roles { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        
     }
+    #endregion
 }

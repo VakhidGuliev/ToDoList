@@ -1,8 +1,12 @@
 ﻿namespace ToDoList.Models.Business.Service.Interface
 {
+    /*
     using System;
     using System.Collections.Generic;
-    public interface IDomainSettings
+    */
+    // Not using
+    #region IDomainSettings
+  /*  public interface IDomainSettings
     {
         /// <summary>
         ///     Gets the name of the application.
@@ -398,4 +402,6 @@
         /// </summary>
         IDictionary<string, string> DefectFileLoadingAccountInfo { get; }
     }
+    */
+    #endregion
 }

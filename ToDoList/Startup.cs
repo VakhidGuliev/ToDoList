@@ -16,30 +16,46 @@
 
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+        #region Ctor
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
+        #endregion
 
-        public IConfiguration Configuration { get; }
-
+        #region  ConfigureServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddTransient<IDataRegistrationUserService, RegistrationDataService>();
-            services.AddTransient<IRegistrationUserService, RegistrationUserService>();
-            services.AddTransient<IDataAuthentication, Authentication>();
-            services.AddTransient<IAuthenticationService, AuthenticationService>();
-            services.AddDbContext<DataToDoListContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DataToDoListContext")));
-        }
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            #region Data
+             services.AddSingleton<IDataUserService, UserDataService>();
+             services.AddTransient<IDataAppRole, AppRoleDataService>();
+             services.AddTransient<IDataCategoryService, CategoryDataService>();
+             services.AddDbContext<DataToDoListContext>(options =>
+             options.UseSqlServer(Configuration.GetConnectionString("DataToDoListContext")));
+            #endregion
+
+            #region Business
+            // services.AddTransient<IAuthenticationService, AuthenticationService>();
+             services.AddSingleton<IUserService, UserService>();
+             services.AddTransient<ICategoryService, CategorySevice>();
+             services.AddTransient<IAppRole, AppRoleService>();
+            #endregion
+        }
+        #endregion
+         
+        #region Configure
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -64,5 +80,6 @@
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+        #endregion
     }
 }
