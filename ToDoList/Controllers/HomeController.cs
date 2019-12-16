@@ -29,13 +29,13 @@
  
         [HttpPost]
 
-        public IActionResult CreateCategory( Category category )
+        public  IActionResult CreateCategory( Category category )
         {
-            var isChek = this.dataCategoryService.CreateCategory(category);
+            var isChek = this.dataCategoryService.CreateCategory(category).Result;
             if (!isChek)
             {
 
-                return BadRequest($"Name { category.Name} is already in use.");
+                return  BadRequest($"Name { category.Name} is already in use.");
             }
             return RedirectToAction("Index");
         }

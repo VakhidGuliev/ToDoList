@@ -1,7 +1,7 @@
 ﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
     using System.Collections.Generic;
-    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using ToDoList.Models.DataAccess.Dal.Entites;
@@ -18,7 +18,7 @@
             this.connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
 
-        public void Create(User user)
+        public async void Create(User user)
         {
             using (var db = new DataToDoListContext(this.Options()))
             {
@@ -26,23 +26,23 @@
                 {
                     throw new AppException("Password is required");
                 }
-
-                if (db.Users.Any(x => x.Email == user.Email))
+                var res = db.Users.AnyAsync(x => x.Email == user.Email).Result;
+                if (res)
                 {
                     throw new AppException("Email \"" + user.Email + "\" is already taken");
                 }
 
                 db.Users.Add(user);
-                db.SaveChanges();
+               await  db.SaveChangesAsync();
             }
         }
 
         /// <inheritdoc/>
-        public List<User> GetRegistrationUsers()
+        public async Task<List<User>> GetRegistrationUsers()
         {
             using (var db = new DataToDoListContext(this.Options()))
             {
-                return db.Users.ToList();
+                return await db.Users.ToListAsync();
             }
         }
 

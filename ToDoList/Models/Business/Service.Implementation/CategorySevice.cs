@@ -1,5 +1,6 @@
 ﻿namespace ToDoList.Models.Business.Service.Implementation
 {
+    using System.Threading.Tasks;
     using ToDoList.Models.Business.Entites;
     using ToDoList.Models.Business.Service.Implementation.Converters;
     using ToDoList.Models.Business.Service.Interface;
@@ -15,7 +16,7 @@
         }
 
         /// <inheritdoc/>
-        public bool CreateCategory(Category category) =>
-            this.dataCategoryService.CreateCategory(UserConverter.FromDalToBl(category));
+        public async Task<bool> CreateCategory(Category category) =>
+         await Task.Run(() => this.dataCategoryService.CreateCategory(UserConverter.FromDalToBl(category)));
     }
 }

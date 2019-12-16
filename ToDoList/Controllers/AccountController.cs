@@ -9,15 +9,18 @@
     using ToDoList.Models.Business.Service.Interface;
     using ToDoList.Models.DataAccess.Data;
     using ToDoList.Models.Helpers;
+    using Microsoft.EntityFrameworkCore;
+    using System.Threading.Tasks;
+    using ToDoList.Models.DataAccess.Dal.Service.Interface;
 
     public class AccountController : Controller
     {
         private readonly IUserService userService;
-        private readonly IAppRole appRole;
+        private readonly IDataAppRole appRole;
         private readonly DataToDoListContext context;
 
         public AccountController(IUserService userService,
-                               IAppRole appRole,
+                               IDataAppRole appRole,
                                DataToDoListContext context)
         {
             this.userService = userService;
@@ -48,14 +51,13 @@
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public  IActionResult Login(string email, string password)
         {
             
           if (ModelState.IsValid)
             {
-                var user = this.context.Users.Where(x => x.Email == email && x.Password == password)?.FirstOrDefault();
+                var user =this.context.Users.FirstOrDefault(x => x.Email == email && x.Password == password);
 
-              
                 if (user != null)
                 {
                     var role = appRole.SetRole(email, password).ToString();
@@ -74,6 +76,7 @@
                       
 
                         isAuthenticated = true;
+                        return RedirectToAction("Index", "Admin");
                     }
 
                     if (!role.Equals("Admin"))
