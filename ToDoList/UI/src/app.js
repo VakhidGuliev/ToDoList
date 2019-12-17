@@ -1,15 +1,18 @@
-import TabController from "./controllers/tab-controller"
+import CategoryController from "./controllers/category-controller"
 
 //variables
-const btnShowCreateList = document.querySelector("#showCreateList");
+const btnCreateList = document.querySelector("#showCreateList");
+const listGroup = document.querySelector('.list-group');
+const tabContent = document.querySelector(".tab-content");
 
 //controllers
-const tabController = new TabController();
+const сategoryController = new CategoryController();
 
 
 
 //listeners
-btnShowCreateList.addEventListener("click", tabController.showCreateListModal);
+btnCreateList.addEventListener("click", сategoryController.CreateCategory);
+listGroup.addEventListener("click", сategoryController.EditCategory);
 
 
 

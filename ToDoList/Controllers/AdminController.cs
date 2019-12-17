@@ -79,7 +79,8 @@ namespace ToDoList.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(email);
+          
+            User user = await _context.Users.FindAsync(email);
             if (user == null)
             {
                 return NotFound();
