@@ -20,12 +20,12 @@
 
         public async void Create(User authUser)
         {
-            await Task.Run(()=>dataUserService.Create(UserConverter.FromDalToBl(authUser, DateTime.Today)));
+            await System.Threading.Tasks.Task.Run(()=>dataUserService.Create(UserConverter.FromDalToBl(authUser, DateTime.Today)));
         }
 
         public async Task<List<User>> GetRegistrationUsers()
         {
-         return  await Task.Run(()=> this.dataUserService.GetRegistrationUsers().Result.
+         return  await System.Threading.Tasks.Task.Run(()=> this.dataUserService.GetRegistrationUsers().Result.
              Select(dbData => UserConverter.FromBlToDal(dbData, DateTime.Today)).ToList());
         }
     }

@@ -15,8 +15,7 @@
             this.dataCategoryService = dataCategoryService;
         }
 
-        /// <inheritdoc/>
-        public async Task<bool> CreateCategory(Category category) =>
-         await Task.Run(() => this.dataCategoryService.CreateCategory(UserConverter.FromDalToBl(category)));
+        public  bool CreateCategory(Category category) =>
+         this.dataCategoryService.CreateCategory(UserConverter.FromDalToBl(category));
     }
 }

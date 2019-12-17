@@ -1,12 +1,11 @@
 ﻿import ApiService from "../services/api-service";
 
-class TabController {
-    constructor() {
+class CategoryController {
+    constructor() {}
 
-    }
+    CreateCategory() {
 
-    showCreateListModal() {
-
+        //open Modal create category
         const listForm = document.querySelector("#ListForm");
 
         $("#ListModal").modal("show");
@@ -27,14 +26,13 @@ class TabController {
         listName.setAttribute("value", "");
 
 
-        const btnCreate = document.querySelector("button.create");
-
-        btnCreate.addEventListener("click", (e) => {
+        //createCategory
+        document.querySelector("button.create").addEventListener("click", (e) => {
             e.preventDefault();
 
-           const categoryName = $("input[name='Name']").val();
+            const categoryName = $("input[name='Name']").val();
 
-           new ApiService().createCategory(categoryName);
+            new ApiService().createCategory(categoryName);
         });
     }
 }

@@ -5,6 +5,6 @@
 
     public interface ICategoryService
     {
-      Task<bool> CreateCategory(Category category);
+      bool CreateCategory(Category category);
     }
 }

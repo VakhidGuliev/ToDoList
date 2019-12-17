@@ -1,5 +1,6 @@
 namespace ToDoList.Models.DataAccess.Dal.Entites
 {
+    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     public class Category
@@ -9,5 +10,7 @@ namespace ToDoList.Models.DataAccess.Dal.Entites
         [Required]
 
         public string Name { get; set; }
+
+        public List<Task> Tasks;
     }
 }

@@ -17,6 +17,10 @@
                 $(".invalid-feedback").html(xhr.responseText)
             }
         });
+
+
+
+
     }
 }
 

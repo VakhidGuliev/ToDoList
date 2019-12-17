@@ -96,13 +96,14 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_tab_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/tab-controller */ "./UI/src/controllers/tab-controller.js");
+/* harmony import */ var _controllers_tab_controller__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_controllers_tab_controller__WEBPACK_IMPORTED_MODULE_0__);
 
 
 //variables
 const btnShowCreateList = document.querySelector("#showCreateList");
 
 //controllers
-const tabController = new _controllers_tab_controller__WEBPACK_IMPORTED_MODULE_0__["default"]();
+const tabController = new _controllers_tab_controller__WEBPACK_IMPORTED_MODULE_0___default.a();
 
 
 
@@ -132,91 +133,10 @@ btnShowCreateList.addEventListener("click", tabController.showCreateListModal);
 /*!**********************************************!*\
   !*** ./UI/src/controllers/tab-controller.js ***!
   \**********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/*! no static exports found */
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/api-service */ "./UI/src/services/api-service.js");
-﻿
-
-class TabController {
-    constructor() {
-
-    }
-
-    showCreateListModal() {
-
-        const listForm = document.querySelector("#ListForm");
-
-        $("#ListModal").modal("show");
-
-        document.querySelector(".modal-footer .buttons").innerHTML = "";
-
-        let buttons = `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                       <button type="submit" class="btn btn-primary create">Save</button>`;
-        document.querySelector(".modal-footer .buttons").insertAdjacentHTML("afterbegin", buttons);
-
-
-        let modalTitle = document.querySelector("#ListModalTitle");
-        let listName = listForm.querySelector("input.listName");
-
-        listForm.name = "createListForm";
-        modalTitle.innerHTML = "Create New List";
-        listName.id = "createList";
-        listName.setAttribute("value", "");
-
-
-        const btnCreate = document.querySelector("button.create");
-
-        btnCreate.addEventListener("click", (e) => {
-            e.preventDefault();
-
-            const categoryName = $("input[name='Name']").val();
-
-            for (let i = 0; i <= 100000; i++) {
-                new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().createCategory(categoryName);
-            }
-        });
-    }
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (TabController);
-
-/***/ }),
-
-/***/ "./UI/src/services/api-service.js":
-/*!****************************************!*\
-  !*** ./UI/src/services/api-service.js ***!
-  \****************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-﻿class ApiService {
-
-    createCategory(categoryName) {
-        $.ajax({
-            url: '/Home/CreateCategory',
-            type: 'POST',
-            data: { Name: categoryName },
-            dataType: 'html',
-            success: function () {
-                $(".invalid-feedback").hide();
-                $(".valid-feedback").show();
-                $(".valid-feedback").html(`Category ${categoryName} successfully created`)
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                $(".valid-feedback").hide();
-                $(".invalid-feedback").show();
-                $(".invalid-feedback").html(xhr.responseText)
-            }
-        });
-    }
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (ApiService);
+throw new Error("Module parse failed: Identifier 'categoryName' has already been declared (52:16)\nYou may need an appropriate loader to handle this file type, currently no loaders are configured to process this file. See https://webpack.js.org/concepts#loaders\n| \n| \n>             let categoryName = document.querySelector(\"#createList\");\n|             let tabNameLength = document.querySelector(`.tab-content .tab-pane[id=\"${category.categoryName}\"]`);\n|             let listLength = document.querySelectorAll(\"#myList a\").length;");
 
 /***/ })
 

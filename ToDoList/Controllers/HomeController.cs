@@ -31,7 +31,7 @@
 
         public  IActionResult CreateCategory( Category category )
         {
-            var isChek = this.dataCategoryService.CreateCategory(category).Result;
+            var isChek = this.dataCategoryService.CreateCategory(category);
             if (!isChek)
             {
 

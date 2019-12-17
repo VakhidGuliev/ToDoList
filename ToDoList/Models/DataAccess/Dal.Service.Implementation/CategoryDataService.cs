@@ -1,6 +1,6 @@
 namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
-    using System.Threading.Tasks;
+    using System.Linq;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using ToDoList.Models.DataAccess.Dal.Entites;
@@ -27,9 +27,9 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             return options;
         }
 
-        public async Task<bool> CreateCategory(Category category)
+        public bool CreateCategory(Category category)
         {
-           var isChek = await this.Context.Categories.AnyAsync(x => x.Name == category.Name);
+           var isChek = this.Context.Categories.Any(x => x.Name == category.Name);
 
            if (isChek)
             {
@@ -39,7 +39,7 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
               using (var db = new DataToDoListContext(this.Options()))
             {
                 db.Categories.Add(category);
-                await db.SaveChangesAsync();
+               db.SaveChanges();
              }
 
            return true;

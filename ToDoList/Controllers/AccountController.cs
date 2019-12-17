@@ -9,8 +9,6 @@
     using ToDoList.Models.Business.Service.Interface;
     using ToDoList.Models.DataAccess.Data;
     using ToDoList.Models.Helpers;
-    using Microsoft.EntityFrameworkCore;
-    using System.Threading.Tasks;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
 
     public class AccountController : Controller
