@@ -26,6 +26,8 @@ class ModalService {
     }
     EditCategory(e){
 
+
+
         let link = e.target;
         let currentList = link.parentElement.parentElement;
         let currentListName = currentList.getAttribute("data-name");

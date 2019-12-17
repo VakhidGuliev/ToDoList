@@ -25,8 +25,8 @@ class CategoryController {
     
     EditCategory(e){
         new ModalService().EditCategory(e);
-        
-        let btnEditSave = e.target;
+
+        let btnEditSave = document.querySelector("button.save");
 
         if (!btnEditSave.classList.contains("save")) {
             return;

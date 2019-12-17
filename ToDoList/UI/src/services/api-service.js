@@ -65,7 +65,9 @@ class ApiService {
             }
         }
     }
-    editCategory(categoryName){}
+    editCategory(categoryName){
+        console.log(categoryName);
+    }
 }
 
 export default ApiService;

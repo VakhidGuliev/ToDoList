@@ -169,8 +169,8 @@ class CategoryController {
     
     EditCategory(e){
         new _services_modal_service__WEBPACK_IMPORTED_MODULE_1__["default"]().EditCategory(e);
-        
-        let btnEditSave = e.target;
+
+        let btnEditSave = document.querySelector("button.save");
 
         if (!btnEditSave.classList.contains("save")) {
             return;
@@ -267,7 +267,9 @@ class ApiService {
             }
         }
     }
-    editCategory(categoryName){}
+    editCategory(categoryName){
+        console.log(categoryName);
+    }
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (ApiService);
@@ -310,6 +312,8 @@ class ModalService {
         this.listName.setAttribute("value", "");
     }
     EditCategory(e){
+
+
 
         let link = e.target;
         let currentList = link.parentElement.parentElement;
