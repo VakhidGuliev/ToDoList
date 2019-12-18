@@ -200,7 +200,9 @@ class CategoryController {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modal_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-service */ "./UI/src/services/modal-service.js");
+/* harmony import */ var _render_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./render-service */ "./UI/src/services/render-service.js");
 ﻿
+
 
 class ApiService {
 
@@ -214,7 +216,7 @@ class ApiService {
                 $(".invalid-feedback").hide();
                 $(".valid-feedback").show();
                 $(".valid-feedback").html(`Category ${categoryName} successfully created`);
-                renderCategory();
+                new _render_service__WEBPACK_IMPORTED_MODULE_1__["default"]().renderCategory();
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 $(".valid-feedback").hide();
@@ -222,50 +224,6 @@ class ApiService {
                 $(".invalid-feedback").html(xhr.responseText)
             }
         });
-
-        function renderCategory(){
-            let category = {
-                categoryName: document.querySelector("#createList").value.toString().trim(),
-            };
-
-            const listForm = document.querySelector("#ListForm");
-            let categoryName = document.querySelector("#createList");
-            let tabNameLength = document.querySelector(`.tab-content .tab-pane[id="${category.categoryName}"]`);
-            let listLength = document.querySelectorAll("#myList a").length;
-
-
-            if (category.categoryName && isNaN(category.categoryName) && tabNameLength === null) {
-
-                let Tab =new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
-
-                // render
-                Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, listLength, 0));
-                Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, listLength));
-
-                //delete active class
-                Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
-                Tab.tabContainer.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("active"));
-
-                //add active class created category
-                Tab.listContainer.querySelector(`a[data-name=${category.categoryName}]`).classList.add("active");
-                Tab.tabContainer.querySelector(`.tab-pane[data-name=${category.categoryName}]`).classList.add("active");
-
-                document.querySelector(".categoriesName").innerHTML = category.categoryName;
-
-                // valid categoryName
-                categoryName.classList.remove("is-invalid");
-                categoryName.classList.add("is-valid");
-
-                listForm.reset();
-                
-                $(".valid-feedback").html("");
-                $(".invalid-feedback").html("");
-
-                $('#ListModal').modal('hide');
-            } else {
-                categoryName.classList.add("is-invalid");
-            }
-        }
     }
     editCategory(categoryName){
         console.log(categoryName);
@@ -286,34 +244,35 @@ class ApiService {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 class ModalService {
-    
-    constructor(){
+
+    constructor() {
         this.listForm = document.querySelector("#ListForm");
         this.listName = document.querySelector("input.listName");
         this.modalButtons = document.querySelector(".modal-footer .buttons");
         this.modalTitle = document.querySelector("#ListModalTitle");
     }
-    
-    
-    CreateCategory(){
-        //open Modal create category
+
+
+    CreateCategory() {
+
+        //open modal
         $("#ListModal").modal("show");
 
         this.modalButtons.innerHTML = "";
 
+        //buttons template
         let buttons = `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                        <button type="submit" class="btn btn-primary create">Save</button>`;
-        document.querySelector(".modal-footer .buttons").insertAdjacentHTML("afterbegin", buttons);
+        this.modalButtons.insertAdjacentHTML("afterbegin", buttons);
 
-
+        //modal options
         this.listForm.name = "createListForm";
         this.modalTitle.innerHTML = "Create New List";
         this.listName.id = "createList";
         this.listName.setAttribute("value", "");
     }
-    EditCategory(e){
 
-
+    EditCategory(e) {
 
         let link = e.target;
         let currentList = link.parentElement.parentElement;
@@ -323,27 +282,29 @@ class ModalService {
         if (!link.classList.contains("fa-edit")) {
             return;
         }
-        
-        
-        $("#ListModal").modal("show");
-        
 
+        //open modal
+        $("#ListModal").modal("show");
+
+        this.modalButtons.innerHTML = "";
+
+        //buttons template
+        let buttons = `<button type="submit" style="position:absolute;left:30px;" class="btn btn-danger btn-delete">Delete</button>
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                       <button type="submit" class="btn btn-primary save">Save</button>`;
+        this.modalButtons.insertAdjacentHTML("afterbegin", buttons);
+
+        //modal options
         this.listForm.name = "editListForm";
         this.modalTitle.innerHTML = "Edit List";
         this.listName.id = "editList";
         this.listName.setAttribute("value", currentListName);
-
-        this.modalButtons.innerHTML = "";
-
-        let buttons = `<button type="submit" style="position:absolute;left:30px;" class="btn btn-danger btn-delete">Delete</button>
-                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                       <button type="submit" class="btn btn-primary save">Save</button>`;
-        document.querySelector(".modal-footer .buttons").insertAdjacentHTML("afterbegin", buttons);
     }
-    DeleteCategory(){}
-    
-    
-    Tabs(){
+
+    DeleteCategory() {}
+
+
+    Tabs() {
         return {
             listContainer: document.querySelector("#myList"),
             tabContainer: document.querySelector(".tab-content"),
@@ -362,6 +323,71 @@ class ModalService {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (ModalService);
+
+/***/ }),
+
+/***/ "./UI/src/services/render-service.js":
+/*!*******************************************!*\
+  !*** ./UI/src/services/render-service.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _modal_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-service */ "./UI/src/services/modal-service.js");
+
+
+class RenderService {
+    constructor(){}
+    
+    renderCategory(){
+        let category = {
+            categoryName: document.querySelector("#createList").value.toString().trim(),
+        };
+
+        const listForm = document.querySelector("#ListForm");
+        let categoryName = document.querySelector("#createList");
+        let tabNameLength = document.querySelector(`.tab-content .tab-pane[id="${category.categoryName}"]`);
+        let listLength = document.querySelectorAll("#myList a").length;
+
+
+        if (category.categoryName && isNaN(category.categoryName) && tabNameLength === null) {
+
+            let Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+
+            // render
+            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, listLength, 0));
+            Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, listLength));
+
+            //delete active class
+            Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
+            Tab.tabContainer.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("active"));
+
+            //add active class created category
+            Tab.listContainer.querySelector(`a[data-name=${category.categoryName}]`).classList.add("active");
+            Tab.tabContainer.querySelector(`.tab-pane[data-name=${category.categoryName}]`).classList.add("active");
+
+            document.querySelector(".categoriesName").innerHTML = category.categoryName;
+
+            // valid categoryName
+            categoryName.classList.remove("is-invalid");
+            categoryName.classList.add("is-valid");
+
+            listForm.reset();
+
+            $(".valid-feedback").html("");
+            $(".invalid-feedback").html("");
+
+            $('#ListModal').modal('hide');
+        } else {
+            categoryName.classList.add("is-invalid");
+            return false;
+        }
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (RenderService);
 
 /***/ })
 

@@ -1,32 +1,33 @@
 class ModalService {
-    
-    constructor(){
+
+    constructor() {
         this.listForm = document.querySelector("#ListForm");
         this.listName = document.querySelector("input.listName");
         this.modalButtons = document.querySelector(".modal-footer .buttons");
         this.modalTitle = document.querySelector("#ListModalTitle");
     }
-    
-    
-    CreateCategory(){
-        //open Modal create category
+
+
+    CreateCategory() {
+
+        //open modal
         $("#ListModal").modal("show");
 
         this.modalButtons.innerHTML = "";
 
+        //buttons template
         let buttons = `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                        <button type="submit" class="btn btn-primary create">Save</button>`;
-        document.querySelector(".modal-footer .buttons").insertAdjacentHTML("afterbegin", buttons);
+        this.modalButtons.insertAdjacentHTML("afterbegin", buttons);
 
-
+        //modal options
         this.listForm.name = "createListForm";
         this.modalTitle.innerHTML = "Create New List";
         this.listName.id = "createList";
         this.listName.setAttribute("value", "");
     }
-    EditCategory(e){
 
-
+    EditCategory(e) {
 
         let link = e.target;
         let currentList = link.parentElement.parentElement;
@@ -36,27 +37,29 @@ class ModalService {
         if (!link.classList.contains("fa-edit")) {
             return;
         }
-        
-        
-        $("#ListModal").modal("show");
-        
 
+        //open modal
+        $("#ListModal").modal("show");
+
+        this.modalButtons.innerHTML = "";
+
+        //buttons template
+        let buttons = `<button type="submit" style="position:absolute;left:30px;" class="btn btn-danger btn-delete">Delete</button>
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                       <button type="submit" class="btn btn-primary save">Save</button>`;
+        this.modalButtons.insertAdjacentHTML("afterbegin", buttons);
+
+        //modal options
         this.listForm.name = "editListForm";
         this.modalTitle.innerHTML = "Edit List";
         this.listName.id = "editList";
         this.listName.setAttribute("value", currentListName);
-
-        this.modalButtons.innerHTML = "";
-
-        let buttons = `<button type="submit" style="position:absolute;left:30px;" class="btn btn-danger btn-delete">Delete</button>
-                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                       <button type="submit" class="btn btn-primary save">Save</button>`;
-        document.querySelector(".modal-footer .buttons").insertAdjacentHTML("afterbegin", buttons);
     }
-    DeleteCategory(){}
-    
-    
-    Tabs(){
+
+    DeleteCategory() {}
+
+
+    Tabs() {
         return {
             listContainer: document.querySelector("#myList"),
             tabContainer: document.querySelector(".tab-content"),
