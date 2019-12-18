@@ -40,6 +40,7 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 
             using (var db = new DataToDoListContext(Options()))
             {
+
                 if (!db.Categories.Contains(category))
                 {
                     db.Categories.Add(category);

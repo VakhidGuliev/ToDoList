@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ToDoList.Models;
@@ -34,8 +35,17 @@ namespace ToDoList.Controllers
         [HttpPost]
         public  IActionResult CreateCategory( Category category )
         {
-            var isCheck = _dataCategoryService.CreateCategory(category);
-            if (!isCheck)
+            Regex reg = new Regex(@"^([\d.,-]+)$");
+            var isCheck = false;
+            if (!reg.IsMatch(category.Name))
+            {
+                isCheck = _dataCategoryService.CreateCategory(category);
+            }
+            else
+            {
+                return BadRequest($"Name { category.Name} Please enter a valid name.");
+            }
+             if (!isCheck)
             {
                return  BadRequest($"Name { category.Name} is already in use.");
             }
