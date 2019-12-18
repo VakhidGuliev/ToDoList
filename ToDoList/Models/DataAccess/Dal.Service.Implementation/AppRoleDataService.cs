@@ -1,26 +1,24 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
+﻿using System.Linq;
+using ToDoList.Models.DataAccess.Dal.Entites;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.DataAccess.Data;
+
+namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
-    using System.Linq;
-    using System.Threading.Tasks;
-    using ToDoList.Models.DataAccess.Dal.Entites;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
-
-
     public class AppRoleDataService : IDataAppRole
     {
-        private readonly DataToDoListContext context;
+        private readonly DataToDoListContext _context;
 
         public AppRoleDataService(DataToDoListContext context)
         {
-            this.context = context;
+            _context = context;
         }
 
         public  User.Role SetRole(string email, string password)
         {
-            var setAdmin =   this.context.Users.FirstOrDefault();
-            var selectAdmin =  this.context.Users.FirstOrDefault(x => x.Email == setAdmin.Email);
-            if (email == selectAdmin.Email && password == setAdmin.Password)
+            var setAdmin =  _context.Users.FirstOrDefault();
+            var selectAdmin = _context.Users.FirstOrDefault(x => x.Email == setAdmin.Email);
+            if (setAdmin != null && (selectAdmin != null && (email == selectAdmin.Email && password == setAdmin.Password)))
             {
                 return User.Role.Admin;
             }

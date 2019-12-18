@@ -1,8 +1,8 @@
-﻿namespace ToDoList.Models.DataAccess.Data
-{
-    using Microsoft.EntityFrameworkCore;
-    using ToDoList.Models.DataAccess.Dal.Entites;
+﻿using Microsoft.EntityFrameworkCore;
+using ToDoList.Models.DataAccess.Dal.Entites;
 
+namespace ToDoList.Models.DataAccess.Data
+{
     #region DataToDoListContext
     public class DataToDoListContext : DbContext
     {

@@ -96,6 +96,8 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/category-controller */ "./UI/src/controllers/category-controller.js");
+/* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/api-service */ "./UI/src/services/api-service.js");
+
 
 
 //variables
@@ -106,6 +108,9 @@ const tabContent = document.querySelector(".tab-content");
 //controllers
 const сategoryController = new _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__["default"]();
 
+$(function () {
+    new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getTasks();
+});
 
 
 //listeners
@@ -201,7 +206,9 @@ class CategoryController {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modal_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-service */ "./UI/src/services/modal-service.js");
 /* harmony import */ var _render_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./render-service */ "./UI/src/services/render-service.js");
+/* harmony import */ var _transform_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./transform-service */ "./UI/src/services/transform-service.js");
 ﻿
+
 
 
 class ApiService {
@@ -210,7 +217,7 @@ class ApiService {
         $.ajax({
             url: '/Home/CreateCategory',
             type: 'POST',
-            data: { Name: categoryName },
+            data: {Name: categoryName},
             dataType: 'html',
             success: function () {
                 $(".invalid-feedback").hide();
@@ -225,9 +232,58 @@ class ApiService {
             }
         });
     }
-    editCategory(categoryName){
+
+    editCategory(categoryName) {
         console.log(categoryName);
     }
+
+    getTasks() {
+        $.ajax({
+            url: '/Home/CategoryList',
+            type: 'GET',
+            success: function (data) {
+                
+                
+                const Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+                const TaskObject = data;
+                
+                
+                const promise = Object(_transform_service__WEBPACK_IMPORTED_MODULE_2__["fbTransformToArray"])(TaskObject);
+
+                promise.then(function (arr) {
+                    let objectKeys = Object.keys(TaskObject);
+                    
+
+                    //Update database
+                    document.querySelector("#myList").innerHTML = "";
+                    document.querySelector(".tab-content").innerHTML = "";
+
+                    objectKeys.forEach((value, index, array) => {
+                        array = arr;
+                        
+                        const objs = array[value];
+
+                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, array[index].tasksCount));
+                        Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(objs.name, index));
+
+                        Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
+                        Tab.tabContainer.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("active"));
+
+                        document.querySelector("#myList a:first-child").classList.add("active");
+                        document.querySelector(".tab-content .tab-pane:first-child").classList.add("active");
+
+                        document.querySelector(".categoriesName").innerHTML = array[0].name;
+                    });
+                }).catch(e => console.log(e.message));
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+
+
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (ApiService);
@@ -388,6 +444,30 @@ class RenderService {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (RenderService);
+
+/***/ }),
+
+/***/ "./UI/src/services/transform-service.js":
+/*!**********************************************!*\
+  !*** ./UI/src/services/transform-service.js ***!
+  \**********************************************/
+/*! exports provided: fbTransformToArray */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fbTransformToArray", function() { return fbTransformToArray; });
+// transform firebase data to object=>
+async function fbTransformToArray(fbData) {
+    return Object.keys(fbData).map(function (value) {
+        const item = fbData[value];
+
+        item.tasksCount = Object.keys(item).length-2;
+        return item;
+    })
+}
+
+
 
 /***/ })
 

@@ -1,31 +1,32 @@
-﻿namespace ToDoList.Models.Business.Service.Implementation
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using ToDoList.Models.Business.Entites;
-    using ToDoList.Models.Business.Service.Implementation.Converters;
-    using ToDoList.Models.Business.Service.Interface;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ToDoList.Models.Business.Entites;
+using ToDoList.Models.Business.Service.Implementation.Converters;
+using ToDoList.Models.Business.Service.Interface;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using Task = System.Threading.Tasks.Task;
 
+namespace ToDoList.Models.Business.Service.Implementation
+{
     public class UserService : IUserService
     {
-        private readonly IDataUserService dataUserService;
+        private readonly IDataUserService _dataUserService;
 
         public UserService(IDataUserService dataUserService)
         {
-            this.dataUserService = dataUserService;
+            _dataUserService = dataUserService;
         }
 
         public async void Create(User authUser)
         {
-            await System.Threading.Tasks.Task.Run(()=>dataUserService.Create(UserConverter.FromDalToBl(authUser, DateTime.Today)));
+            await Task.Run(()=>_dataUserService.Create(UserConverter.FromDalToBl(authUser, DateTime.Today)));
         }
 
         public async Task<List<User>> GetRegistrationUsers()
         {
-         return  await System.Threading.Tasks.Task.Run(()=> this.dataUserService.GetRegistrationUsers().Result.
+         return  await Task.Run(()=> _dataUserService.GetRegistrationUsers().Result.
              Select(dbData => UserConverter.FromBlToDal(dbData, DateTime.Today)).ToList());
         }
     }

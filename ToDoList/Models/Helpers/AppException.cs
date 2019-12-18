@@ -1,12 +1,13 @@
-﻿namespace ToDoList.Models.Helpers
-{
-    using System;
-    using System.Globalization;
+﻿using System;
+using System.Globalization;
 
+namespace ToDoList.Models.Helpers
+{
     #region AppException
     public class AppException:Exception
     {
-        public AppException() : base() { }
+        public AppException()
+        { }
 
         public AppException(string message) : base(message) { }
 

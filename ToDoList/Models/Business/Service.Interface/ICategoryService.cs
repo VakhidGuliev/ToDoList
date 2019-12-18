@@ -1,10 +1,11 @@
-﻿namespace ToDoList.Models.Business.Service.Interface
-{
-    using System.Threading.Tasks;
-    using ToDoList.Models.Business.Entites;
+﻿using System.Collections.Generic;
+using ToDoList.Models.Business.Entites;
 
+namespace ToDoList.Models.Business.Service.Interface
+{
     public interface ICategoryService
     {
       bool CreateCategory(Category category);
+      IEnumerable<Category> Categories();
     }
 }

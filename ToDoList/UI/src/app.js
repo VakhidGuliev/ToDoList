@@ -11,7 +11,7 @@ const сategoryController = new CategoryController();
 
 $(function () {
     new ApiService().getTasks();
-})
+});
 
 
 //listeners

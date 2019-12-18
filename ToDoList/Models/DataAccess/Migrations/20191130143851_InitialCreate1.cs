@@ -38,15 +38,15 @@ namespace ToDoList.Migrations
                 name: "AuthUser",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Email = table.Column<string>(nullable: false),
-                    FirstName = table.Column<string>(nullable: false),
-                    LastName = table.Column<string>(nullable: false),
-                    Password = table.Column<string>(nullable: false),
-                    ConfirmPassword = table.Column<string>(nullable: false),
-                    DateOfBirth = table.Column<DateTime>(nullable: false),
-                    Age = table.Column<int>(nullable: false)
+                    Email = table.Column<string>(),
+                    FirstName = table.Column<string>(),
+                    LastName = table.Column<string>(),
+                    Password = table.Column<string>(),
+                    ConfirmPassword = table.Column<string>(),
+                    DateOfBirth = table.Column<DateTime>(),
+                    Age = table.Column<int>()
                 },
                 constraints: table =>
                 {

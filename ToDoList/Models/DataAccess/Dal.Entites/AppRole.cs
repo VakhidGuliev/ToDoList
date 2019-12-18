@@ -1,7 +1,7 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Entites
-{
-    using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace ToDoList.Models.DataAccess.Dal.Entites
+{
     public class AppRole
     {
            public int Id { get; set; }

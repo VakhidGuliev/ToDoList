@@ -1,7 +1,7 @@
-﻿namespace ToDoList.Models.Business.Entites
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace ToDoList.Models.Business.Entites
+{
     // Not using
     public class Account
     {

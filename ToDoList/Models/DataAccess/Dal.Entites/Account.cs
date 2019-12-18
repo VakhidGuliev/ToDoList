@@ -1,7 +1,7 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Entites
-{
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace ToDoList.Models.DataAccess.Dal.Entites
+{
     public class Account
     {
         public int Id { get; set; }

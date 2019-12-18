@@ -95,15 +95,15 @@ namespace ToDoList.Migrations
                 name: "RegistrationUsers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Age = table.Column<int>(nullable: false),
-                    ConfirmPassword = table.Column<string>(maxLength: 16, nullable: false),
-                    DateOfBirth = table.Column<DateTime>(nullable: false),
-                    Email = table.Column<string>(maxLength: 100, nullable: false),
-                    FirstName = table.Column<string>(maxLength: 16, nullable: false),
-                    LastName = table.Column<string>(maxLength: 16, nullable: false),
-                    Password = table.Column<string>(maxLength: 16, nullable: false)
+                    Age = table.Column<int>(),
+                    ConfirmPassword = table.Column<string>(maxLength: 16),
+                    DateOfBirth = table.Column<DateTime>(),
+                    Email = table.Column<string>(maxLength: 100),
+                    FirstName = table.Column<string>(maxLength: 16),
+                    LastName = table.Column<string>(maxLength: 16),
+                    Password = table.Column<string>(maxLength: 16)
                 },
                 constraints: table =>
                 {

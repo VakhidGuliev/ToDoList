@@ -2,7 +2,6 @@
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
-
     #region Program
     public class Program
     {

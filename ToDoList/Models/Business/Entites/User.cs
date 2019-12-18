@@ -1,7 +1,7 @@
-﻿namespace ToDoList.Models.Business.Entites
-{
-    using System;
+﻿using System;
 
+namespace ToDoList.Models.Business.Entites
+{
     public class User
     {
         public string FirstName { get; set; }

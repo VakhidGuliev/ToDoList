@@ -1,22 +1,22 @@
-﻿namespace ToDoList
-{
-    using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using ToDoList.Models.Business.Service.Implementation;
-    using ToDoList.Models.Business.Service.Interface;
-    using ToDoList.Models.DataAccess.Dal.Service.Implementation;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using ToDoList.Models.Business.Service.Implementation;
+using ToDoList.Models.Business.Service.Interface;
+using ToDoList.Models.DataAccess.Dal.Service.Implementation;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.DataAccess.Data;
 
+namespace ToDoList
+{
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         #region Ctor
         public Startup(IConfiguration configuration)
@@ -49,7 +49,7 @@
             #region Business
             // services.AddTransient<IAuthenticationService, AuthenticationService>();
              services.AddSingleton<IUserService, UserService>();
-             services.AddTransient<ICategoryService, CategorySevice>();
+             services.AddTransient<ICategoryService, CategoryService>();
              services.AddTransient<IAppRole, AppRoleService>();
             #endregion
         }

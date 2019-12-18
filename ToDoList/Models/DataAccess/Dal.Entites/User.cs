@@ -1,8 +1,8 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Entites
-{
-    using System;
-    using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
+namespace ToDoList.Models.DataAccess.Dal.Entites
+{
     public class User
     {
         public int Id { get; set; }

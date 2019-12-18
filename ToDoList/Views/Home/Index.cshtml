@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "ApplicationPage";
 }﻿
+@using System.Security.Claims
 @model ToDoList.Models.DataAccess.Dal.Entites.Category
 
 
@@ -43,7 +44,7 @@
                         <div class="dropdown-menu dropdown-menu-right dropdown-info"
                              aria-labelledby="navbarDropdownMenuLink-4">
                             <a class="dropdown-item" data-target="#AccountModal" data-toggle="modal">My account</a>
-                            <a asp-action="logout" asp-controller="account" class="dropdown-item" id="signout">
+                            <a asp-action="logout" asp-controller="Account" class="dropdown-item" id="signout">
                                 Sign Out
                             </a>
                         </div>
@@ -62,8 +63,8 @@
                     </a>
                 </div>
                 <div>
-                    Hello @User.FindFirst(email => email.Type == System.Security.Claims.ClaimTypes.Email)?.Value,
-                    Role @User.FindFirst(claim => claim.Type == System.Security.Claims.ClaimTypes.Role)?.Value
+                    Hello @User.FindFirst(email => email.Type == ClaimTypes.Email)?.Value,
+                    Role @User.FindFirst(claim => claim.Type == ClaimTypes.Role)?.Value
 
                 </div>
                 <div class="search-block input-group md-form form-sm form-2 pl-0">

@@ -1,9 +1,8 @@
-﻿namespace ToDoList.Models.Business.Service.Implementation.Converters
-{
-    using System;
-    using ToDoList.Models.Business.Entites;
-    using User = ToDoList.Models.Business.Entites.User;
+﻿using System;
+using ToDoList.Models.Business.Entites;
 
+namespace ToDoList.Models.Business.Service.Implementation.Converters
+{
     public class UserConverter
     {
         public static User FromBlToDal(DataAccess.Dal.Entites.User user, DateTime today) =>
@@ -15,7 +14,7 @@
                BirthDate = new DateTime(today.Year, user.DateOfBirth.Month, user.DateOfBirth.Day),
                Age = today.Year - user.DateOfBirth.Year,
                Password = user.Password,
-               ConfirmPassword = user.ConfirmPassword,
+               ConfirmPassword = user.ConfirmPassword
            };
 
         public static DataAccess.Dal.Entites.User FromDalToBl(User user, DateTime today) =>
@@ -27,28 +26,26 @@
                DateOfBirth = new DateTime(today.Year, user.BirthDate.Month, user.BirthDate.Day),
                Age = today.Year - user.BirthDate.Year,
                Password = user.Password,
-               ConfirmPassword = user.ConfirmPassword,
+               ConfirmPassword = user.ConfirmPassword
            };
 
         public static Category FromBlToDal(DataAccess.Dal.Entites.Category category) =>
         new Category
        {
-           Name = category.Name,
+           Name = category.Name
        };
 
         public static DataAccess.Dal.Entites.Category FromDalToBl(Category category) =>
            new DataAccess.Dal.Entites.Category
            {
-               Name = category.Name,
+               Name = category.Name
            };
 
         public static User.Role FromBlToDal(DataAccess.Dal.Entites.User.Role role) =>
-        new User.Role
-         { };
+        new User.Role();
 
         public static DataAccess.Dal.Entites.User.Role FromBlToDal(User.Role role) =>
-         new DataAccess.Dal.Entites.User.Role
-         { };
+         new DataAccess.Dal.Entites.User.Role();
 
         // Not using
 

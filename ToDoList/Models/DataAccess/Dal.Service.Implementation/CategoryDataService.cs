@@ -1,48 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using ToDoList.Models.DataAccess.Dal.Entites;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.DataAccess.Data;
+
 namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
-    using System.Linq;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using ToDoList.Models.DataAccess.Dal.Entites;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
-
-    public class CategoryDataService :IDataCategoryService
+    public class CategoryDataService : IDataCategoryService
     {
-        private readonly string connectionString;
+        private readonly string _connectionString;
 
-        public DataToDoListContext Context { get; }
+        private DataToDoListContext Context { get; }
 
-        public CategoryDataService( IConfiguration configuration , DataToDoListContext context)
+        public CategoryDataService(IConfiguration configuration, DataToDoListContext context)
         {
-            this.Context = context;
-            this.connectionString = configuration.GetConnectionString("DataToDoListContext");
+            Context = context;
+            _connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
 
         private DbContextOptions<DataToDoListContext> Options()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataToDoListContext>();
-            DbContextOptions<DataToDoListContext> options = optionsBuilder.UseSqlServer(this.connectionString)
+            var options = optionsBuilder.UseSqlServer(_connectionString)
                 .Options;
             return options;
         }
 
         public bool CreateCategory(Category category)
         {
-           var isChek = this.Context.Categories.Any(x => x.Name == category.Name);
+            var isCheck = Context.Categories.Any(x => x.Name == category.Name);
 
-           if (isChek)
+            if (isCheck)
             {
                 return false;
             }
 
-              using (var db = new DataToDoListContext(this.Options()))
+            using (var db = new DataToDoListContext(Options()))
             {
-                db.Categories.Add(category);
-               db.SaveChanges();
-             }
+                if (!db.Categories.Contains(category))
+                {
+                    db.Categories.Add(category);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception($"{category.Name} is already exist in DataBase, please crete another name");
+                }
+            }
 
-           return true;
+            return true;
+        }
+
+        public IEnumerable<Category> Categories()
+        {
+            using (var db = new DataToDoListContext(Options()))
+            {
+
+                return db.Categories.ToList();
+            }
+
         }
     }
 }

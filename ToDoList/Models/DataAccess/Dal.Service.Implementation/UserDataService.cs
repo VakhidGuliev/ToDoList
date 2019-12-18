@@ -1,26 +1,26 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
-{
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using ToDoList.Models.DataAccess.Dal.Entites;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
-    using ToDoList.Models.Helpers;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using ToDoList.Models.DataAccess.Dal.Entites;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.DataAccess.Data;
+using ToDoList.Models.Helpers;
 
+namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
+{
     public class UserDataService : IDataUserService
     {
-        private readonly string connectionString;
+        private readonly string _connectionString;
 
         public UserDataService(IConfiguration configuration)
         {
-            this.connectionString = configuration.GetConnectionString("DataToDoListContext");
+            _connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
 
         public async void Create(User user)
         {
-            using (var db = new DataToDoListContext(this.Options()))
+            using (var db = new DataToDoListContext(Options()))
             {
                 if (string.IsNullOrWhiteSpace(user.Password))
                 {
@@ -40,7 +40,7 @@
         /// <inheritdoc/>
         public async Task<List<User>> GetRegistrationUsers()
         {
-            using (var db = new DataToDoListContext(this.Options()))
+            using (var db = new DataToDoListContext(Options()))
             {
                 return await db.Users.ToListAsync();
             }
@@ -49,7 +49,7 @@
         private DbContextOptions<DataToDoListContext> Options()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataToDoListContext>();
-            DbContextOptions<DataToDoListContext> options = optionsBuilder.UseSqlServer(this.connectionString)
+            var options = optionsBuilder.UseSqlServer(_connectionString)
               .Options;
             return options;
         }

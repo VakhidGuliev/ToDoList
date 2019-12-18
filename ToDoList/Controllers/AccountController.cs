@@ -1,106 +1,95 @@
-﻿namespace CookieDemo.Controllers
-{
-    using System.Linq;
-    using System.Security.Claims;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authentication.Cookies;
-    using Microsoft.AspNetCore.Mvc;
-    using ToDoList.Models.Business.Entites;
-    using ToDoList.Models.Business.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
-    using ToDoList.Models.Helpers;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
+﻿using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using ToDoList.Models.Business.Entites;
+using ToDoList.Models.Business.Service.Interface;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.DataAccess.Data;
+using ToDoList.Models.Helpers;
 
+namespace ToDoList.Controllers
+{
     public class AccountController : Controller
     {
-        private readonly IUserService userService;
-        private readonly IDataAppRole appRole;
-        private readonly DataToDoListContext context;
+        private readonly IUserService _userService;
+        private readonly IDataAppRole _appRole;
+        private readonly DataToDoListContext _context;
 
         public AccountController(IUserService userService,
                                IDataAppRole appRole,
                                DataToDoListContext context)
         {
-            this.userService = userService;
-            this.appRole = appRole;
-            this.context = context;
+            _userService = userService;
+            _appRole = appRole;
+            _context = context;
         }
 
         public IActionResult Registration() =>
-               this.View();
+               View();
 
         [HttpPost]
         public IActionResult CreateUser([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]User authUser)
         {
             try
             {
-                if (this.ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
 
-                    this.userService.Create(authUser);
+                    _userService.Create(authUser);
                 }
             }
             catch (AppException ex)
             {
-                return this.BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
 
-            return this.RedirectToAction(nameof(this.Login));
+            return RedirectToAction(nameof(this.Login));
         }
 
         [HttpPost]
         public  IActionResult Login(string email, string password)
         {
-            
-          if (ModelState.IsValid)
-            {
-                var user =this.context.Users.FirstOrDefault(x => x.Email == email && x.Password == password);
+            if (!ModelState.IsValid) return View();
+            var user =_context.Users.FirstOrDefault(x => x.Email == email && x.Password == password);
 
-                if (user != null)
-                {
-                    var role = appRole.SetRole(email, password).ToString();
+            if (user == null) return View();
+            var role = _appRole.SetRole(email, password).ToString();
 
-                    ClaimsIdentity identity = null;
-                    bool isAuthenticated = false;
+          ClaimsIdentity identity = null;
+          
+          var isAuthenticated = false;
 
-                    if (role.Equals("Admin"))
-                    {
+          if (role.Equals("Admin"))
+          {
+            identity = new ClaimsIdentity(new[] {
+                  new Claim(ClaimTypes.Email, email),
+                  new Claim(ClaimTypes.Role, "Admin")
+              }, CookieAuthenticationDefaults.AuthenticationScheme);
+               
+            isAuthenticated = true;
+                     
+          }
+
+          if (!role.Equals("Admin"))
+          {
+               identity = new ClaimsIdentity(new[] {
+                  new Claim(ClaimTypes.Email, email),
+                  new Claim(ClaimTypes.Role, "User")
+              }, CookieAuthenticationDefaults.AuthenticationScheme);
+
+              isAuthenticated = true;
+          }
+
+          if (!isAuthenticated) return View();
+          var principal = new ClaimsPrincipal(identity);
+
+          HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+          return RedirectToAction("Index", "Home");
 
 
-                        identity = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, "Admin")
-                }, CookieAuthenticationDefaults.AuthenticationScheme);
-                      
-
-                        isAuthenticated = true;
-                        return RedirectToAction("Index", "Admin");
-                    }
-
-                    if (!role.Equals("Admin"))
-                    {
-
-                        identity = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, "User")
-                }, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        isAuthenticated = true;
-                    }
-
-                    if (isAuthenticated)
-                    {
-                        var principal = new ClaimsPrincipal(identity);
-
-                        var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
-            }
-         
-            
-            return View();
         }
 
         public IActionResult Login()
@@ -110,8 +99,8 @@
 
         public IActionResult Logout()
         {
-            this.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return this.RedirectToAction("Login");
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
         }
 
     }

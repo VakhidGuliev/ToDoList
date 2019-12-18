@@ -1,12 +1,5 @@
 ﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Configuration;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
-    using System.Linq;
-    using ToDoList.Models.DataAccess.Dal.Entites;
-
     //public class DataAuthentication : IDataAuthentication
     //{
     //    private readonly string connectionString;
