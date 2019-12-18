@@ -40,6 +40,10 @@ class CategoryController {
             console.log("edit task");
         });
     }
+    
+    switchCategory(e){
+        new ModalService().showTab(e)
+    }
 }
 
 export default CategoryController;

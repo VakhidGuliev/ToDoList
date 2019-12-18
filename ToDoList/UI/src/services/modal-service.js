@@ -75,6 +75,34 @@ class ModalService {
             }
         };
     }
+
+    showTab (e) {
+        let link = e.target;
+
+        if (!link.classList.contains('list-group-item')) {
+            return;
+        }
+
+        let linkName = link.dataset.name;
+        let listSearch = document.querySelector(".tab-content .searchList");
+
+        document.querySelectorAll('.tab-pane, .list-group-item').forEach(el => {
+            el.classList.remove("active");
+        });
+
+        document.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("hide"));
+        document.querySelectorAll(".tab-pane.active").forEach(value => value.classList.add("show"));
+
+        if (listSearch) {
+            listSearch.remove();
+        }
+
+
+        link.classList.add("active");
+        document.querySelector(`.tab-pane[id=${linkName}]`).classList.add("active");
+        document.querySelector(".categoriesName").innerHTML = linkName;
+        document.querySelector(".AddTask").style.display = "block";
+    }
 }
 
 export default ModalService;

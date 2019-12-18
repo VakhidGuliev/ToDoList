@@ -97,6 +97,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/category-controller */ "./UI/src/controllers/category-controller.js");
 /* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/api-service */ "./UI/src/services/api-service.js");
+/* harmony import */ var _services_modal_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/modal-service */ "./UI/src/services/modal-service.js");
+
 
 
 
@@ -106,7 +108,7 @@ const listGroup = document.querySelector('.list-group');
 const tabContent = document.querySelector(".tab-content");
 
 //controllers
-const сategoryController = new _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__["default"]();
+const categoryController = new _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__["default"]();
 
 $(function () {
     new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getTasks();
@@ -114,8 +116,9 @@ $(function () {
 
 
 //listeners
-btnCreateList.addEventListener("click", сategoryController.CreateCategory);
-listGroup.addEventListener("click", сategoryController.EditCategory);
+btnCreateList.addEventListener("click", categoryController.CreateCategory);
+listGroup.addEventListener("click", categoryController.EditCategory);
+listGroup.addEventListener("click", categoryController.switchCategory);
 
 
 
@@ -189,6 +192,10 @@ class CategoryController {
             console.log("edit task");
         });
     }
+    
+    switchCategory(e){
+        new _services_modal_service__WEBPACK_IMPORTED_MODULE_1__["default"]().showTab(e)
+    }
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (CategoryController);
@@ -232,11 +239,9 @@ class ApiService {
             }
         });
     }
-
     editCategory(categoryName) {
         console.log(categoryName);
     }
-
     getTasks() {
         $.ajax({
             url: '/Home/CategoryList',
@@ -375,6 +380,34 @@ class ModalService {
                 return `<div class="tab-pane" id="${tab}" data-name="${tab}" data-index="${index}" role="tabpanel"></div>`
             }
         };
+    }
+
+    showTab (e) {
+        let link = e.target;
+
+        if (!link.classList.contains('list-group-item')) {
+            return;
+        }
+
+        let linkName = link.dataset.name;
+        let listSearch = document.querySelector(".tab-content .searchList");
+
+        document.querySelectorAll('.tab-pane, .list-group-item').forEach(el => {
+            el.classList.remove("active");
+        });
+
+        document.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("hide"));
+        document.querySelectorAll(".tab-pane.active").forEach(value => value.classList.add("show"));
+
+        if (listSearch) {
+            listSearch.remove();
+        }
+
+
+        link.classList.add("active");
+        document.querySelector(`.tab-pane[id=${linkName}]`).classList.add("active");
+        document.querySelector(".categoriesName").innerHTML = linkName;
+        document.querySelector(".AddTask").style.display = "block";
     }
 }
 
