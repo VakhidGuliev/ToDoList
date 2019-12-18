@@ -1,4 +1,5 @@
 import CategoryController from "./controllers/category-controller"
+import ApiService from "./services/api-service";
 
 //variables
 const btnCreateList = document.querySelector("#showCreateList");
@@ -8,6 +9,9 @@ const tabContent = document.querySelector(".tab-content");
 //controllers
 const сategoryController = new CategoryController();
 
+$(function () {
+    new ApiService().getTasks();
+})
 
 
 //listeners

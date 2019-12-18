@@ -25,6 +25,19 @@ class ApiService {
     editCategory(categoryName){
         console.log(categoryName);
     }
+
+    getTasks() {
+        $.ajax({
+            url: '/Home/CategoryList',
+            type: 'GET',
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
 }
 
 export default ApiService;
