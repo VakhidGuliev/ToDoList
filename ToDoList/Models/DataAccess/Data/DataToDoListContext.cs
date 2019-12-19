@@ -15,7 +15,7 @@ namespace ToDoList.Models.DataAccess.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<AppRole> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Tasks> TasksList { get; set; }
         
     }
     #endregion

@@ -11,6 +11,6 @@ namespace ToDoList.Models.DataAccess.Dal.Entites
 
         public string Name { get; set; }
 
-        public List<Task> Tasks;
+        public List<Tasks> TasksList;
     }
 }

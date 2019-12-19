@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ToDoList.Models.Business.Entites;
 using ToDoList.Models.Business.Service.Implementation.Converters;
 using ToDoList.Models.Business.Service.Interface;
@@ -25,10 +26,21 @@ namespace ToDoList.Models.Business.Service.Implementation
             return res;
                 }
 
-        public Category UpdateCategory(Category category)
+         public async void DeleteCategory(int? id)
         {
-            throw new System.NotImplementedException();
+           await Task.Run(()=>_dataCategoryService.DeleteCategory(id));
         }
+
+        public async Task<Category> UpdateCategory(Category category)
+        {
+
+            DataAccess.Dal.Entites.Category dalCategory = UserConverter.FromDalToBl(category);
+            Category dalMethod = UserConverter.FromBlToDal(dalCategory);
+            DataAccess.Dal.Entites.Category c = UserConverter.FromDalToBl(dalMethod);
+            return await Task.Run(() => UserConverter.FromBlToDal(_dataCategoryService.UpdateCategory(c).Result));
+        }
+
+
 
         //public Category UpdateCategory(Category category)
         //{

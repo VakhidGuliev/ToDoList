@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Models;
 using ToDoList.Models.Business.Entites;
+using ToDoList.Models.Business.Service.Implementation.Converters;
 using ToDoList.Models.Business.Service.Interface;
 using ToDoList.Models.DataAccess.Dal.Service.Interface;
 using ToDoList.Models.DataAccess.Data;
@@ -40,7 +41,7 @@ namespace ToDoList.Controllers
 
         }
         [HttpGet]
-        public JsonResult EditCategory(string name,int?id)
+        public JsonResult EditCategory(string name, int? id)
         {
             if (name == null)
             {
@@ -57,7 +58,7 @@ namespace ToDoList.Controllers
 
 
         [HttpPut]
-        public JsonResult EditCategory(string name,int id, [Bind("Name")]Models.DataAccess.Dal.Entites.Category category)
+        public async Task<JsonResult> EditCategory(string name, int id, [Bind("Name")]Category category)
         {
             if (name != category.Name)
             {
@@ -68,11 +69,9 @@ namespace ToDoList.Controllers
             {
                 try
                 {
-                    category.Id = id;
-                    var countPre = _context.Categories.Count();
-                    var res = _dataCategoryDataService.UpdateCategory(category);
-                    var countNew = _context.Categories.Count();
 
+                    category.Id = id;
+                    await _dataCategoryService.UpdateCategory(category);
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -120,18 +119,12 @@ namespace ToDoList.Controllers
                 return Json("Not found");
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.Id == id);
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
-            if (category == null)
-            {
-                return Json("Not found");
-            }
-            return Json($"Category {category.Name} was deleted !");
+            await Task.Run(() => _dataCategoryService.DeleteCategory(id));
+
+            return Json($"Category was deleted !");
         }
 
-       
+
         private bool CategoryExist(string name)
         {
             return _context.Categories.Any(e => e.Name == name);

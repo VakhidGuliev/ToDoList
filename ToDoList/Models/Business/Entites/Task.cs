@@ -2,9 +2,9 @@
 
 namespace ToDoList.Models.Business.Entites
 {
-    public class Task
+    public class Tasks
     {
         public string Name { get; set; }
-        public List<Task> Tasks;
+        public List<Tasks> TaskList;
     }
 }
