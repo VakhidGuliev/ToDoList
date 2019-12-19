@@ -23,23 +23,61 @@ class ApiService {
             }
         });
     }
-    editCategory(categoryName) {
+    editCategory(id,newData) {
         $.ajax({
-            url: '/Home/Edit',
+            url: '/Home/EditCategory',
             type: 'PUT',
-            data: { Name: categoryName },
+            data: { Id: id, Name: newData },
             dataType: 'html',
-            success: function () {
-                alert("edit succsess")
-                this.getTasks();
+            success: function (data) {
+
+                const newData = JSON.parse(data);
+                const newName = newData.name;
+                const Tab = new ModalService().Tabs();
+
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).querySelector(".listName").innerHTML = newName;
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).setAttribute(`data-name`, `${newName}`);
+                Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).setAttribute(`data-name`, `${newName}`);
+
+                document.querySelector(".categoriesName").innerHTML = newName;
+
+                $('#ListModal').modal('hide');
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xht.responseText)
+                console.log(xhr)
             }
         });
     }
+    deleteCategory(id){
+        $.ajax({
+            url: '/Home/DeleteCategory',
+            type: 'DELETE',
+            data: { Id: id},
+            dataType: 'html',
+            success: function () {
+                const Tab = new ModalService().Tabs();
+                
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).remove();
+                Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).remove();
+
+                document.querySelector(".categoriesName").innerHTML = "";
 
 
+                $("#myList a:first-child").addClass("active")
+                $(".tab-content .tab-pane:first-child").addClass("active");
+
+                const activeName = $("#myList a:first-child").attr("data-name");
+
+                document.querySelector(".categoriesName").innerHTML = activeName;
+                
+                $('#ListModal').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+    
     getTasks() {
         $.ajax({
             url: '/Home/CategoryList',
@@ -65,8 +103,9 @@ class ApiService {
                         array = arr;
                         
                         const objs = array[value];
+                        index = objs.id;
 
-                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, array[index].tasksCount));
+                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, 0));
                         Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(objs.name, index));
 
                         Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
@@ -85,8 +124,6 @@ class ApiService {
             }
         });
     }
-
-
 }
 
 export default ApiService;

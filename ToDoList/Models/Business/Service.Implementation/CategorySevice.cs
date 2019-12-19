@@ -16,11 +16,26 @@ namespace ToDoList.Models.Business.Service.Implementation
             _dataCategoryService = dataCategoryService;
         }
 
-        public  bool CreateCategory(Category category) =>
+        public bool CreateCategory(Category category) =>
          _dataCategoryService.CreateCategory(UserConverter.FromDalToBl(category));
 
-        public IEnumerable<Category> Categories() =>
-            _dataCategoryService.Categories().Select(UserConverter.FromBlToDal).ToList();
-        
-  }
+        public IEnumerable<Category> Categories() {
+            List<DataAccess.Dal.Entites.Category> a = _dataCategoryService.Categories().ToList();
+            List<Category> res = _dataCategoryService.Categories().Select(UserConverter.FromBlToDal).ToList();
+            return res;
+                }
+
+        public Category UpdateCategory(Category category)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        //public Category UpdateCategory(Category category)
+        //{
+        //    var dalCategory = UserConverter.FromDalToBl(category);
+        //    var dalMethod = _dataCategoryService.UpdateCategory(dalCategory);
+        //    var dalCategoryRes = UserConverter.FromBlToDal(dalMethod);
+        //    return dalCategoryRes;
+        //}
+    }
 }

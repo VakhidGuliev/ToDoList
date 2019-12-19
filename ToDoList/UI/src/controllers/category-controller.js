@@ -4,6 +4,7 @@ import ModalService from "../services/modal-service";
 class CategoryController {
     constructor() {}
 
+    //create
     CreateCategory() {
         
         new ModalService().CreateCategory();
@@ -22,25 +23,43 @@ class CategoryController {
             new ApiService().createCategory(categoryName);
         });
     }
-    
-    EditCategory(e){
+
+    //delete,edit
+    EditCategory(e) {
+
         new ModalService().EditCategory(e);
 
-        let btnEditSave = document.querySelector("button.save");
+        let link = e.target;
 
-        if (!btnEditSave.classList.contains("save")) {
+        if (!link.classList.contains("fa-edit")) {
             return;
         }
-        
-        btnEditSave.addEventListener("click", (e)=> {
+
+        let btnEditSave = document.querySelector("button.save");
+        let btnDelete = document.querySelector("button.btn-delete");
+
+
+        btnDelete.addEventListener("click", (e) => {
             e.preventDefault();
 
-            const categoryName = $("input[name='Name']").val();
+            const id = $(".list-group-item-action.active").attr("data-id");
 
-            console.log("edit task");
+            new ApiService().deleteCategory(id);
+        })
+        btnEditSave.addEventListener("click", (e) => {
+
+            e.preventDefault();
+
+            
+            const categoryName = $("input[name='Name']").val();
+            const id = $(".list-group-item-action.active").attr("data-id");
+            
+            new ApiService().editCategory(id,categoryName);
         });
+
     }
     
+    //switch
     switchCategory(e){
         new ModalService().showTab(e)
     }

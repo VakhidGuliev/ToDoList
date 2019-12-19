@@ -59,10 +59,25 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
         {
             using (var db = new DataToDoListContext(Options()))
             {
-
+              
                 return db.Categories.ToList();
             }
 
+        }
+
+        public Category UpdateCategory(Category category)
+        {
+            if (category.Name !=null)
+            {
+                using (var db = new DataToDoListContext(Options()))
+                {
+
+                    db.Categories.Update(category);
+                    db.SaveChanges();
+              
+                }
+            }
+            return category;
         }
     }
 }

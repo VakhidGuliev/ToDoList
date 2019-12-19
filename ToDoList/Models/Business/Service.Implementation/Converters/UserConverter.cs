@@ -32,6 +32,7 @@ namespace ToDoList.Models.Business.Service.Implementation.Converters
         public static Category FromBlToDal(DataAccess.Dal.Entites.Category category) =>
         new Category
        {
+            
            Name = category.Name
        };
 

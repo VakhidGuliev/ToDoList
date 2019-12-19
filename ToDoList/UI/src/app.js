@@ -1,6 +1,5 @@
 import CategoryController from "./controllers/category-controller"
 import ApiService from "./services/api-service";
-import ModalService from "./services/modal-service";
 
 //variables
 const btnCreateList = document.querySelector("#showCreateList");
@@ -16,6 +15,7 @@ $(function () {
 
 
 //listeners
+//1) categories
 btnCreateList.addEventListener("click", categoryController.CreateCategory);
 listGroup.addEventListener("click", categoryController.EditCategory);
 listGroup.addEventListener("click", categoryController.switchCategory);

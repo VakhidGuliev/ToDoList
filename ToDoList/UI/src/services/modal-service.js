@@ -26,7 +26,6 @@ class ModalService {
         this.listName.id = "createList";
         this.listName.setAttribute("value", "");
     }
-
     EditCategory(e) {
 
         let link = e.target;
@@ -56,26 +55,23 @@ class ModalService {
         this.listName.setAttribute("value", currentListName);
     }
 
-    DeleteCategory() {}
-
 
     Tabs() {
         return {
             listContainer: document.querySelector("#myList"),
             tabContainer: document.querySelector(".tab-content"),
             renderLists: function (list, index, array) {
-                return `<a class="list-group-item list-group-item-action" data-name="${list}" data-index="${index}" role="tab">
+                return `<a class="list-group-item list-group-item-action" data-name="${list}" data-id="${index}" role="tab">
                                 <span class="listName"><i class="fa fa-list-ul"></i>${list}</span>
                                 <span class="listCount badge badge-primary" title="Task count">${array}</span>
                                 <span class="editList" title="List options"><i class="fa fa-edit"></i></span>
                             </a>`
             },
             renderTabs: function (tab, index) {
-                return `<div class="tab-pane" id="${tab}" data-name="${tab}" data-index="${index}" role="tabpanel"></div>`
+                return `<div class="tab-pane"  data-name="${tab}" data-id="${index}" role="tabpanel"></div>`
             }
         };
     }
-
     showTab (e) {
         let link = e.target;
 
@@ -99,7 +95,7 @@ class ModalService {
 
 
         link.classList.add("active");
-        document.querySelector(`.tab-pane[id=${linkName}]`).classList.add("active");
+        document.querySelector(`.tab-pane[data-name='${linkName}']`).classList.add("active");
         document.querySelector(".categoriesName").innerHTML = linkName;
         document.querySelector(".AddTask").style.display = "block";
     }

@@ -97,8 +97,6 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/category-controller */ "./UI/src/controllers/category-controller.js");
 /* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/api-service */ "./UI/src/services/api-service.js");
-/* harmony import */ var _services_modal_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/modal-service */ "./UI/src/services/modal-service.js");
-
 
 
 
@@ -116,6 +114,7 @@ $(function () {
 
 
 //listeners
+//1) categories
 btnCreateList.addEventListener("click", categoryController.CreateCategory);
 listGroup.addEventListener("click", categoryController.EditCategory);
 listGroup.addEventListener("click", categoryController.switchCategory);
@@ -156,6 +155,7 @@ __webpack_require__.r(__webpack_exports__);
 class CategoryController {
     constructor() {}
 
+    //create
     CreateCategory() {
         
         new _services_modal_service__WEBPACK_IMPORTED_MODULE_1__["default"]().CreateCategory();
@@ -174,25 +174,43 @@ class CategoryController {
             new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().createCategory(categoryName);
         });
     }
-    
-    EditCategory(e){
+
+    //delete,edit
+    EditCategory(e) {
+
         new _services_modal_service__WEBPACK_IMPORTED_MODULE_1__["default"]().EditCategory(e);
 
-        let btnEditSave = document.querySelector("button.save");
+        let link = e.target;
 
-        if (!btnEditSave.classList.contains("save")) {
+        if (!link.classList.contains("fa-edit")) {
             return;
         }
-        
-        btnEditSave.addEventListener("click", (e)=> {
+
+        let btnEditSave = document.querySelector("button.save");
+        let btnDelete = document.querySelector("button.btn-delete");
+
+
+        btnDelete.addEventListener("click", (e) => {
             e.preventDefault();
 
-            const categoryName = $("input[name='Name']").val();
+            const id = $(".list-group-item-action.active").attr("data-id");
 
-            console.log("edit task");
+            new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().deleteCategory(id);
+        })
+        btnEditSave.addEventListener("click", (e) => {
+
+            e.preventDefault();
+
+            
+            const categoryName = $("input[name='Name']").val();
+            const id = $(".list-group-item-action.active").attr("data-id");
+            
+            new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().editCategory(id,categoryName);
         });
+
     }
     
+    //switch
     switchCategory(e){
         new _services_modal_service__WEBPACK_IMPORTED_MODULE_1__["default"]().showTab(e)
     }
@@ -239,9 +257,61 @@ class ApiService {
             }
         });
     }
-    editCategory(categoryName) {
-        console.log(categoryName);
+    editCategory(id,newData) {
+        $.ajax({
+            url: '/Home/EditCategory',
+            type: 'PUT',
+            data: { Id: id, Name: newData },
+            dataType: 'html',
+            success: function (data) {
+
+                const newData = JSON.parse(data);
+                const newName = newData.name;
+                const Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).querySelector(".listName").innerHTML = newName;
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).setAttribute(`data-name`, `${newName}`);
+                Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).setAttribute(`data-name`, `${newName}`);
+
+                document.querySelector(".categoriesName").innerHTML = newName;
+
+                $('#ListModal').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
     }
+    deleteCategory(id){
+        $.ajax({
+            url: '/Home/DeleteCategory',
+            type: 'DELETE',
+            data: { Id: id},
+            dataType: 'html',
+            success: function () {
+                const Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+                
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).remove();
+                Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).remove();
+
+                document.querySelector(".categoriesName").innerHTML = "";
+
+
+                $("#myList a:first-child").addClass("active")
+                $(".tab-content .tab-pane:first-child").addClass("active");
+
+                const activeName = $("#myList a:first-child").attr("data-name");
+
+                document.querySelector(".categoriesName").innerHTML = activeName;
+                
+                $('#ListModal').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+    
     getTasks() {
         $.ajax({
             url: '/Home/CategoryList',
@@ -267,8 +337,9 @@ class ApiService {
                         array = arr;
                         
                         const objs = array[value];
+                        index = objs.id;
 
-                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, array[index].tasksCount));
+                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, 0));
                         Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(objs.name, index));
 
                         Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
@@ -287,8 +358,6 @@ class ApiService {
             }
         });
     }
-
-
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (ApiService);
@@ -332,7 +401,6 @@ class ModalService {
         this.listName.id = "createList";
         this.listName.setAttribute("value", "");
     }
-
     EditCategory(e) {
 
         let link = e.target;
@@ -362,26 +430,23 @@ class ModalService {
         this.listName.setAttribute("value", currentListName);
     }
 
-    DeleteCategory() {}
-
 
     Tabs() {
         return {
             listContainer: document.querySelector("#myList"),
             tabContainer: document.querySelector(".tab-content"),
             renderLists: function (list, index, array) {
-                return `<a class="list-group-item list-group-item-action" data-name="${list}" data-index="${index}" role="tab">
+                return `<a class="list-group-item list-group-item-action" data-name="${list}" data-id="${index}" role="tab">
                                 <span class="listName"><i class="fa fa-list-ul"></i>${list}</span>
                                 <span class="listCount badge badge-primary" title="Task count">${array}</span>
                                 <span class="editList" title="List options"><i class="fa fa-edit"></i></span>
                             </a>`
             },
             renderTabs: function (tab, index) {
-                return `<div class="tab-pane" id="${tab}" data-name="${tab}" data-index="${index}" role="tabpanel"></div>`
+                return `<div class="tab-pane"  data-name="${tab}" data-id="${index}" role="tabpanel"></div>`
             }
         };
     }
-
     showTab (e) {
         let link = e.target;
 
@@ -405,7 +470,7 @@ class ModalService {
 
 
         link.classList.add("active");
-        document.querySelector(`.tab-pane[id=${linkName}]`).classList.add("active");
+        document.querySelector(`.tab-pane[data-name='${linkName}']`).classList.add("active");
         document.querySelector(".categoriesName").innerHTML = linkName;
         document.querySelector(".AddTask").style.display = "block";
     }
@@ -439,6 +504,8 @@ class RenderService {
         let categoryName = document.querySelector("#createList");
         let tabNameLength = document.querySelector(`.tab-content .tab-pane[id="${category.categoryName}"]`);
         let listLength = document.querySelectorAll("#myList a").length;
+        const lastId = parseInt($(".list-group a:last-child").attr("data-id"));
+        const newId = (lastId + 1).toString();
 
 
         if (category.categoryName && isNaN(category.categoryName) && tabNameLength === null) {
@@ -446,8 +513,8 @@ class RenderService {
             let Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
 
             // render
-            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, listLength, 0));
-            Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, listLength));
+            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, newId, 0));
+            Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, newId));
 
             //delete active class
             Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));

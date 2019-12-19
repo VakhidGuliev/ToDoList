@@ -1,12 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Models;
 using ToDoList.Models.Business.Entites;
 using ToDoList.Models.Business.Service.Interface;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
 using ToDoList.Models.DataAccess.Data;
 
 namespace ToDoList.Controllers
@@ -15,11 +17,13 @@ namespace ToDoList.Controllers
     {
         private readonly DataToDoListContext _context;
         private readonly ICategoryService _dataCategoryService;
+        private readonly IDataCategoryService _dataCategoryDataService;
 
-        public HomeController(DataToDoListContext context, ICategoryService categoryService)
+        public HomeController(DataToDoListContext context, ICategoryService categoryService, IDataCategoryService data)
         {
             _context = context;
             _dataCategoryService = categoryService;
+            _dataCategoryDataService = data;
         }
 
         [Authorize(Roles = "Admin,User")]
@@ -28,14 +32,67 @@ namespace ToDoList.Controllers
         {
             return View();
         }
-       
+
         [HttpGet]
-        public  JsonResult CategoryList() =>
-                     Json(_dataCategoryService.Categories());
-        
+        public JsonResult CategoryList()
+        {
+            return Json(_context.Categories.ToList());
+
+        }
+        [HttpGet]
+        public JsonResult EditCategory(string name,int?id)
+        {
+            if (name == null)
+            {
+                return Json("Not Found");
+            }
+
+            var category = _context.Categories.Find(name);
+            if (category == null)
+            {
+                return Json("Not Found");
+            }
+            return Json(category);
+        }
+
+
+        [HttpPut]
+        public JsonResult EditCategory(string name,int id, [Bind("Name")]Models.DataAccess.Dal.Entites.Category category)
+        {
+            if (name != category.Name)
+            {
+                return Json($"Name {category.Name} is already in use.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    category.Id = id;
+                    var countPre = _context.Categories.Count();
+                    var res = _dataCategoryDataService.UpdateCategory(category);
+                    var countNew = _context.Categories.Count();
+
+
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CategoryExist(category.Name))
+                    {
+                        return Json($"Name {category.Name} is already in use.");
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+            }
+            return Json(category);
+        }
 
         [HttpPost]
-        public  IActionResult CreateCategory( Category category )
+        public IActionResult CreateCategory(Category category)
         {
             Regex reg = new Regex(@"^([\d.,-]+)$");
             var isCheck = false;
@@ -47,84 +104,34 @@ namespace ToDoList.Controllers
             {
                 return BadRequest($"Name { category.Name} Please enter a valid name.");
             }
-             if (!isCheck)
+            if (!isCheck)
             {
-               return  BadRequest($"Name { category.Name} is already in use.");
+                return BadRequest($"Name { category.Name} is already in use.");
             }
             return RedirectToAction("Index");
         }
 
-        public IActionResult Edit(string name)
+
+        [HttpDelete]
+        public async Task<JsonResult> DeleteCategory(int? id)
         {
-            if (name == null)
+            if (id == null)
             {
-                return NotFound();
+                return Json("Not found");
             }
 
-            var category =  _context.Categories.Find(name);
+            var category = await _context.Categories
+                .FirstOrDefaultAsync(m => m.Id == id);
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
             if (category == null)
             {
-                return NotFound();
+                return Json("Not found");
             }
-            return RedirectToAction("Index");
+            return Json($"Category {category.Name} was deleted !");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public  IActionResult Edit(string name,[Bind("Name")] Models.DataAccess.Dal.Entites.Category category)
-        {
-            if (name != category.Name)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(category);
-                     _context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CategoryExist(category.Name))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Index");
-            }
-            return RedirectToAction("Index");
-        }
-        //public IActionResult Delete(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var category =  _context.Categories
-        //        .FirstOrDefault(m => m.Id == id);
-        //    if (category == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return RedirectToAction("Index");
-        //}
-
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public IActionResult DeleteConfirmed(int id)
-        //{
-        //    var category =  _context.Categories.Find(id);
-        //    _context.Categories.Remove(category);
-        //    _context.SaveChanges();
-        //    return RedirectToAction("Index");
-        //}
+       
         private bool CategoryExist(string name)
         {
             return _context.Categories.Any(e => e.Name == name);

@@ -212,3 +212,7 @@ span.invalid-feedback {
     font-size: 100% !important;
     font-weight: bold;
 }
+
+i.fa.fa-list-ul {
+    margin-right: 5px;
+}
