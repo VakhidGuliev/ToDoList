@@ -24,8 +24,22 @@ class ApiService {
         });
     }
     editCategory(categoryName) {
-        console.log(categoryName);
+        $.ajax({
+            url: '/Home/Edit',
+            type: 'PUT',
+            data: { Name: categoryName },
+            dataType: 'html',
+            success: function () {
+                alert("edit succsess")
+                this.getTasks();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xht.responseText)
+            }
+        });
     }
+
+
     getTasks() {
         $.ajax({
             url: '/Home/CategoryList',

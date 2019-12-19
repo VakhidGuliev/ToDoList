@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ToDoList.Models;
 using ToDoList.Models.Business.Entites;
 using ToDoList.Models.Business.Service.Interface;
@@ -51,81 +53,82 @@ namespace ToDoList.Controllers
             }
             return RedirectToAction("Index");
         }
-//
-//        public async Task<IActionResult> Edit(int? id)
-//        {
-//            if (id == null)
-//            {
-//                return NotFound();
-//            }
-//
-//            var category = await context.Categories.FindAsync(id);
-//            if (category == null)
-//            {
-//                return NotFound();
-//            }
-//            return RedirectToAction("Index");
-//        }
 
-//        [HttpPost]
-//        [ValidateAntiForgeryToken]
-//        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Models.DataAccess.Dal.Entites.Category  category)
-//        {
-//            if (id != category.Id)
-//            {
-//                return NotFound();
-//            }
-//
-//            if (ModelState.IsValid)
-//            {
-//                try
-//                {
-//                    context.Update(category);
-//                    await context.SaveChangesAsync();
-//                }
-//                catch (DbUpdateConcurrencyException)
-//                {
-//                    if (!CategoryExist(category.Id))
-//                    {
-//                        return NotFound();
-//                    }
-//                    else
-//                    {
-//                        throw;
-//                    }
-//                }
-//                return RedirectToAction("Index");
-//            }
-//            return RedirectToAction("Index");
-//        }
-//        public async Task<IActionResult> Delete(int? id)
-//        {
-//            if (id == null)
-//            {
-//                return NotFound();
-//            }
-//
-//            var category = await context.Categories
-//                .FirstOrDefaultAsync(m => m.Id == id);
-//            if (category == null)
-//            {
-//                return NotFound();
-//            }
-//            return RedirectToAction("Index");
-////        }
-//        [HttpPost, ActionName("Delete")]
-//        [ValidateAntiForgeryToken]
-//        public async Task<IActionResult> DeleteConfirmed(int id)
-//        {
-//            var category = await context.Categories.FindAsync(id);
-//            context.Categories.Remove(category);
-//            await context.SaveChangesAsync();
-//            return RedirectToAction("Index");
-//        }
-//        private bool CategoryExist(int id)
-//        {
-//            return context.Categories.Any(e => e.Id == id);
-//        }
+        public IActionResult Edit(string name)
+        {
+            if (name == null)
+            {
+                return NotFound();
+            }
+
+            var category =  _context.Categories.Find(name);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public  IActionResult Edit(string name,[Bind("Name")] Models.DataAccess.Dal.Entites.Category category)
+        {
+            if (name != category.Name)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(category);
+                     _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CategoryExist(category.Name))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+        }
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var category =  _context.Categories
+        //        .FirstOrDefault(m => m.Id == id);
+        //    if (category == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return RedirectToAction("Index");
+        //}
+
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult DeleteConfirmed(int id)
+        //{
+        //    var category =  _context.Categories.Find(id);
+        //    _context.Categories.Remove(category);
+        //    _context.SaveChanges();
+        //    return RedirectToAction("Index");
+        //}
+        private bool CategoryExist(string name)
+        {
+            return _context.Categories.Any(e => e.Name == name);
+        }
         [Authorize(Roles = "Admin")]
 
         public IActionResult Setting()
