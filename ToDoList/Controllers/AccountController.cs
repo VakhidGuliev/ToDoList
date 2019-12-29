@@ -1,29 +1,26 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using ToDoList.Models.Business.Entites;
-using ToDoList.Models.Business.Service.Interface;
-using ToDoList.Models.DataAccess.Dal.Service.Interface;
-using ToDoList.Models.DataAccess.Data;
-using ToDoList.Models.Helpers;
-
-namespace ToDoList.Controllers
+﻿namespace ToDoList.Controllers
 {
+    using System.Security.Claims;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Mvc;
+    using ToDoList.Models.Business.Entites;
+    using ToDoList.Models.Business.Service.Interface;
+    using ToDoList.Models.Helpers;
+
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IDataAppRole _appRole;
-        private readonly DataToDoListContext _context;
+        private readonly IAppRole _appRole;
+        private readonly IAccountService _accountService;
 
         public AccountController(IUserService userService,
-                               IDataAppRole appRole,
-                               DataToDoListContext context)
+                                 IAppRole appRole,
+                                 IAccountService accountService)
         {
             _userService = userService;
+            _accountService = accountService;
             _appRole = appRole;
-            _context = context;
         }
 
         public IActionResult Registration() =>
@@ -49,45 +46,44 @@ namespace ToDoList.Controllers
         }
 
         [HttpPost]
-        public  IActionResult Login(string email, string password)
+        public IActionResult Login(string email, string password)
         {
             if (!ModelState.IsValid) return View();
-            var user =_context.Users.FirstOrDefault(x => x.Email == email && x.Password == password);
-
+            var user = _accountService.InsertToAccount(email, password);
             if (user == null) return View();
             var role = _appRole.SetRole(email, password).ToString();
 
-          ClaimsIdentity identity = null;
-          
-          var isAuthenticated = false;
+            ClaimsIdentity identity = null;
 
-          if (role.Equals("Admin"))
-          {
-            identity = new ClaimsIdentity(new[] {
+            var isAuthenticated = false;
+
+            if (role.Equals("Admin"))
+            {
+                identity = new ClaimsIdentity(new[] {
                   new Claim(ClaimTypes.Email, email),
                   new Claim(ClaimTypes.Role, "Admin")
               }, CookieAuthenticationDefaults.AuthenticationScheme);
-               
-            isAuthenticated = true;
-                     
-          }
 
-          if (!role.Equals("Admin"))
-          {
-               identity = new ClaimsIdentity(new[] {
+                isAuthenticated = true;
+
+            }
+
+            if (!role.Equals("Admin"))
+            {
+                identity = new ClaimsIdentity(new[] {
                   new Claim(ClaimTypes.Email, email),
                   new Claim(ClaimTypes.Role, "User")
               }, CookieAuthenticationDefaults.AuthenticationScheme);
 
-              isAuthenticated = true;
-          }
+                isAuthenticated = true;
+            }
 
-          if (!isAuthenticated) return View();
-          var principal = new ClaimsPrincipal(identity);
+            if (!isAuthenticated) return View();
+            var principal = new ClaimsPrincipal(identity);
 
-          HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-          return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Home");
 
 
         }

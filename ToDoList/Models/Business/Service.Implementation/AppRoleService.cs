@@ -1,5 +1,7 @@
-﻿using ToDoList.Models.Business.Service.Interface;
+﻿using ToDoList.Models.Business.Entites;
+using ToDoList.Models.Business.Service.Interface;
 using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.Helpers;
 
 namespace ToDoList.Models.Business.Service.Implementation
 {
@@ -12,6 +14,10 @@ namespace ToDoList.Models.Business.Service.Implementation
             _dataAppRole = dataAppRole;
         }
 
-  
+        public User.Role SetRole(string email, string password)
+        {
+       
+         return CommonConverter.FromDalToBl(_dataAppRole.SetRole(email, password));
+        }
     }
 }

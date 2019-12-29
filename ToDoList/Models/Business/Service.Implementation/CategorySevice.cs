@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using ToDoList.Models.Business.Entites;
-using ToDoList.Models.Business.Service.Implementation.Converters;
 using ToDoList.Models.Business.Service.Interface;
 using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.Helpers;
+using Task = System.Threading.Tasks.Task;
 
 namespace ToDoList.Models.Business.Service.Implementation
 {
@@ -17,37 +18,31 @@ namespace ToDoList.Models.Business.Service.Implementation
             _dataCategoryService = dataCategoryService;
         }
 
-        public bool CreateCategory(Category category) =>
-         _dataCategoryService.CreateCategory(UserConverter.FromDalToBl(category));
+        public bool CreateCategory(Category category)
+        {
+            var convert = CommonConverter.FromBlToDal(category);
+            return _dataCategoryService.CreateCategory(convert);
+        }
 
-        public IEnumerable<Category> Categories() {
-            List<DataAccess.Dal.Entites.Category> a = _dataCategoryService.Categories().ToList();
-            List<Category> res = _dataCategoryService.Categories().Select(UserConverter.FromBlToDal).ToList();
-            return res;
-                }
-
-         public async void DeleteCategory(int? id)
+        public List<Category> Categories() =>
+            _dataCategoryService.Categories().Select(CommonConverter.FromDalToBl).ToList();
+          
+          public async void DeleteCategory(int? id)
         {
            await Task.Run(()=>_dataCategoryService.DeleteCategory(id));
         }
 
-        public async Task<Category> UpdateCategory(Category category)
+ 
+       
+        Category ICategoryService.UpdateCategory(Category category, int userAccountId)
         {
-
-            DataAccess.Dal.Entites.Category dalCategory = UserConverter.FromDalToBl(category);
-            Category dalMethod = UserConverter.FromBlToDal(dalCategory);
-            DataAccess.Dal.Entites.Category c = UserConverter.FromDalToBl(dalMethod);
-            return await Task.Run(() => UserConverter.FromBlToDal(_dataCategoryService.UpdateCategory(c).Result));
+            DataAccess.Dal.Entites.Category convert = CommonConverter.FromBlToDal(category);
+            return CommonConverter.FromDalToBl(_dataCategoryService.UpdateCategory(convert));
         }
 
 
 
-        //public Category UpdateCategory(Category category)
-        //{
-        //    var dalCategory = UserConverter.FromDalToBl(category);
-        //    var dalMethod = _dataCategoryService.UpdateCategory(dalCategory);
-        //    var dalCategoryRes = UserConverter.FromBlToDal(dalMethod);
-        //    return dalCategoryRes;
-        //}
+
+       
     }
 }

@@ -1,11 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace ToDoList.Models.DataAccess.Dal.Entites
+﻿namespace ToDoList.Models.DataAccess.Dal.Entites
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
     public class User
     {
         public int Id { get; set; }
+
+        public int UserAccountid { get; set; }
 
         [StringLength(100)]
 

@@ -6,15 +6,15 @@ class CategoryController {
 
     //create
     CreateCategory() {
-        
+
         new ModalService().CreateCategory();
-        
+
         const btnCreate = document.querySelector("button.create");
 
         if (!btnCreate.classList.contains("create")) {
             return;
         }
-        
+
         btnCreate.addEventListener("click", (e) => {
             e.preventDefault();
 

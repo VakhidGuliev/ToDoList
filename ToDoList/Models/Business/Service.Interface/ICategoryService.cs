@@ -7,8 +7,8 @@ namespace ToDoList.Models.Business.Service.Interface
     public interface ICategoryService
     {
         bool CreateCategory(Category category);
-        Task<Category> UpdateCategory(Category category);
+        Category UpdateCategory(Category category, int userAccountId);
         void DeleteCategory(int? id);
-        IEnumerable<Category> Categories();
+        List<Category> Categories();
     }
 }

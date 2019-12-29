@@ -1,8 +1,19 @@
-﻿
+﻿@model ToDoList.Models.Business.Entites.EmailSetting
 @{
     ViewData["Title"] = "Privacy Policy";
 }
 <h2>@ViewData["Title"]</h2>
 
 <p>Use this page to detail your site's privacy policy.</p>
+<div class="row">
+</div>
+<div class="row">
+    <div class="col-6">
+        <form method="post" asp-action="SendMessage">
+            <div class="form-group">
+           </div>
+            <button type="submit" class="btn btn-primary">Send Email</button>
+        </form>
+    </div>
+</div>
 

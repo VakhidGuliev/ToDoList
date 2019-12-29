@@ -1,7 +1,11 @@
-﻿namespace ToDoList.Models.Business.Service.Interface
+﻿using ToDoList.Models.Business.Entites;
+
+namespace ToDoList.Models.Business.Service.Interface
 {
-    // Not using
-    public class IAccountService
+        
+    public interface IAccountService
     {
+        User InsertToAccount(string email, string password);
     }
+
 }

@@ -1,7 +1,8 @@
-﻿namespace ToDoList
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+
+namespace ToDoList
 {
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
     #region Program
     public class Program
     {

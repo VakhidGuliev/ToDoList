@@ -8,7 +8,7 @@ class ApiService {
         $.ajax({
             url: '/Home/CreateCategory',
             type: 'POST',
-            data: {Name: categoryName},
+            data: { Name: categoryName },
             dataType: 'html',
             success: function () {
                 $(".invalid-feedback").hide();
@@ -77,8 +77,7 @@ class ApiService {
             }
         });
     }
-    
-    getTasks() {
+    getCategories() {
         $.ajax({
             url: '/Home/CategoryList',
             type: 'GET',
@@ -121,6 +120,33 @@ class ApiService {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText)
+            }
+        });
+    }
+    
+    getTasks() {
+        $.ajax({
+            url: '/Home/TaskList',
+            type: 'GET',
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+    
+    createTask(data){
+        $.ajax({
+            url: '/Home/CreateTask',
+            type: 'POST',
+            data: data,
+            success: function () {
+               console.log("задача создана");
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+               console.log(xhr.responseText)
             }
         });
     }

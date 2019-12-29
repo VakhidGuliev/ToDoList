@@ -97,6 +97,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/category-controller */ "./UI/src/controllers/category-controller.js");
 /* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/api-service */ "./UI/src/services/api-service.js");
+/* harmony import */ var _controllers_task_controller__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controllers/task-controller */ "./UI/src/controllers/task-controller.js");
+
 
 
 
@@ -104,12 +106,15 @@ __webpack_require__.r(__webpack_exports__);
 const btnCreateList = document.querySelector("#showCreateList");
 const listGroup = document.querySelector('.list-group');
 const tabContent = document.querySelector(".tab-content");
+const createTaskForm = document.forms.namedItem("AddTask");
 
 //controllers
 const categoryController = new _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__["default"]();
+const taskController = new _controllers_task_controller__WEBPACK_IMPORTED_MODULE_2__["default"]();
 
+// load data
 $(function () {
-    new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getTasks();
+    new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getCategories();
 });
 
 
@@ -118,6 +123,18 @@ $(function () {
 btnCreateList.addEventListener("click", categoryController.CreateCategory);
 listGroup.addEventListener("click", categoryController.EditCategory);
 listGroup.addEventListener("click", categoryController.switchCategory);
+
+
+
+//tasks
+
+createTaskForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    taskController.createTask();
+})
+
+
 
 
 
@@ -157,15 +174,15 @@ class CategoryController {
 
     //create
     CreateCategory() {
-        
+
         new _services_modal_service__WEBPACK_IMPORTED_MODULE_1__["default"]().CreateCategory();
-        
+
         const btnCreate = document.querySelector("button.create");
 
         if (!btnCreate.classList.contains("create")) {
             return;
         }
-        
+
         btnCreate.addEventListener("click", (e) => {
             e.preventDefault();
 
@@ -220,6 +237,43 @@ class CategoryController {
 
 /***/ }),
 
+/***/ "./UI/src/controllers/task-controller.js":
+/*!***********************************************!*\
+  !*** ./UI/src/controllers/task-controller.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/api-service */ "./UI/src/services/api-service.js");
+
+
+class TaskController {
+    constructor() {}
+
+    editTask() {}
+
+    deleteTask() {}
+
+    createTask() {
+
+                    
+
+                const taskData = {
+                    'Name': $("form[name='AddTask']").find("input[name='Name']").val(),
+                    'Description': "",
+                    'CategoryId': $(".tab-content .tab-pane.active").attr("data-id")
+                };
+
+                new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().createTask(taskData)
+        }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (TaskController);
+
+/***/ }),
+
 /***/ "./UI/src/services/api-service.js":
 /*!****************************************!*\
   !*** ./UI/src/services/api-service.js ***!
@@ -237,12 +291,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class ApiService {
-
     createCategory(categoryName) {
         $.ajax({
             url: '/Home/CreateCategory',
             type: 'POST',
-            data: {Name: categoryName},
+            data: { Name: categoryName },
             dataType: 'html',
             success: function () {
                 $(".invalid-feedback").hide();
@@ -311,8 +364,7 @@ class ApiService {
             }
         });
     }
-    
-    getTasks() {
+    getCategories() {
         $.ajax({
             url: '/Home/CategoryList',
             type: 'GET',
@@ -355,6 +407,33 @@ class ApiService {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText)
+            }
+        });
+    }
+    
+    getTasks() {
+        $.ajax({
+            url: '/Home/TaskList',
+            type: 'GET',
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+    
+    createTask(data){
+        $.ajax({
+            url: '/Home/CreateTask',
+            type: 'POST',
+            data: data,
+            success: function () {
+               console.log("задача создана");
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+               console.log(xhr.responseText)
             }
         });
     }

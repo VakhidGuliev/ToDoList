@@ -1,9 +1,9 @@
 ﻿
 @{
     ViewData["Title"] = "ApplicationPage";
-}﻿
+}
 @using System.Security.Claims
-@model ToDoList.Models.DataAccess.Dal.Entites.Category
+@model ToDoList.Models.Business.Entites.Category
 
 
 <!doctype html>
@@ -91,9 +91,9 @@
             <div class="col-9 main-block">
                 <h1 class="categoriesName"></h1>
                 <div class="AddTask">
-                    <form method="post" name="task">
+                    <form method="post" name="AddTask">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="name" id="name" placeholder="Add task"
+                            <input type="text" class="form-control" name="Name" id="name" placeholder="Add task"
                                    aria-label="Add task"
                                    aria-describedby="button-addon2">
                             <div class="input-group-append">

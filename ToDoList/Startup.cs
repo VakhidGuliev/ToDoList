@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ToDoList.Models.Business.Service.Implementation;
 using ToDoList.Models.Business.Service.Interface;
+using ToDoList.Models.DataAccess.Dal.Entites;
 using ToDoList.Models.DataAccess.Dal.Service.Implementation;
 using ToDoList.Models.DataAccess.Dal.Service.Interface;
 using ToDoList.Models.DataAccess.Data;
@@ -30,20 +31,25 @@ namespace ToDoList
         {
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
             #region Data
-             services.AddSingleton<IDataUserService, UserDataService>();
-             services.AddTransient<IDataAppRole, AppRoleDataService>();
-             services.AddTransient<IDataCategoryService, CategoryDataService>();
+             services.AddSingleton<IDataUserService, DataUserService>();
+             services.AddTransient<IDataAppRole, DataAppRoleService>();
+             services.AddTransient<IDataCategoryService, DataCategoryService>();
+             services.AddTransient<IDataTaskService, DataTaskService>();
+             services.AddTransient<IDataAccountService, DataAccountService>();
+             services.AddSingleton<IDataEmailService, DataEmailSenderService>();
+             services.Configure<EmailSetting>(Configuration.GetSection("EmailSetting"));
              services.AddDbContext<DataToDoListContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString("DataToDoListContext")));
+
+      
             #endregion
 
             #region Business
@@ -51,6 +57,9 @@ namespace ToDoList
              services.AddSingleton<IUserService, UserService>();
              services.AddTransient<ICategoryService, CategoryService>();
              services.AddTransient<IAppRole, AppRoleService>();
+             services.AddTransient<ITaskService, TaskService>();
+             services.AddTransient<IAccountService, AccountService>();
+             services.AddTransient<IEmailService, EmailService>();
             #endregion
         }
         #endregion
@@ -58,6 +67,7 @@ namespace ToDoList
         #region Configure
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var res = env;
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,7 +75,6 @@ namespace ToDoList
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

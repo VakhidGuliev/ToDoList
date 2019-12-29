@@ -1,10 +1,20 @@
-﻿using System.Collections.Generic;
-
-namespace ToDoList.Models.Business.Entites
+﻿namespace ToDoList.Models.Business.Entites
 {
-    public class Tasks
+    using System;
+
+    public class Task
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
-        public List<Tasks> TaskList;
+
+        public string Description { get; set; }
+
+        public DateTime CreateTime { get; set; }
+
+        public DateTime DurationTime { get; set; }
+
+        public int CategoryId { get; set; }
+        
     }
 }
