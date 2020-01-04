@@ -30,5 +30,18 @@
          return  await Task.Run(()=> _dataUserService.GetRegistrationUsers().Result.
              Select(dbData => CommonConverter.FromDalToBl(dbData)).ToList());
         }
+
+        public User GetUser(string email)
+        {
+            DataAccess.Dal.Entites.User user = _dataUserService.GetUser(email);
+            
+            return CommonConverter.FromDalToBl(user);
+
+        }
+
+        public string RegUserEmail() => _dataUserService.RegUserEmail();
+
+
+
     }
 }

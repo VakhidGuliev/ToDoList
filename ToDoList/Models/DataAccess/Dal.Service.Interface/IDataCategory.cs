@@ -12,7 +12,9 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Interface
 
        void DeleteCategory(int? id);
 
-       List<Category> Categories();
+        int Count(int userAccountId);
+
+       List<Category> Categories(int? userAccountId);
     }
   
 }

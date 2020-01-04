@@ -13,14 +13,14 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
     public class DataCategoryService : IDataCategoryService
     {
         private readonly string _connectionString;
-      //  private readonly IDataAppRole _dataAppRole;
+        //  private readonly IDataAppRole _dataAppRole;
         private DataToDoListContext Context { get; }
 
         public DataCategoryService(IConfiguration configuration, DataToDoListContext context)
         {
             Context = context;
             _connectionString = configuration.GetConnectionString("DataToDoListContext");
-           // _dataAppRole = dataAppRole;
+            // _dataAppRole = dataAppRole;
         }
 
         private DbContextOptions<DataToDoListContext> Options()
@@ -33,17 +33,23 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 
         public bool CreateCategory(Category category)
         {
-            var isCheck = Context.Categories.Any(x => x.Name == category.Name);
-
-            if (isCheck)
-            {
-                return false;
-            }
 
             using (var db = new DataToDoListContext(Options()))
             {
 
-                if (!db.Categories.Contains(category))
+                User user = db.Users.FirstOrDefault(x => x.UserAccountId == category.UserAccountId);
+                var isContains = false;
+                var names = db.Categories.Where(x => x.UserAccountId == category.UserAccountId).ToList();
+                foreach (var item in names)
+                {
+                    if (item.Name.Contains(category.Name))
+                    {
+                        isContains = true;
+                    }
+                }
+                var isChek = Categories(user.UserAccountId).FirstOrDefault(x => x.Name == category.Name);
+      
+                if (!isContains)
                 {
                     db.Categories.Add(category);
                     db.SaveChanges();
@@ -57,30 +63,47 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             return true;
         }
 
-        public List<Category> Categories( )
+        public List<Category> Categories(int? userAccountId)
         {
-            using (var db = new DataToDoListContext(Options()))
-            {
+             using (var db = new DataToDoListContext(Options()))
+                {
+                    User getUser = db.Users.FirstOrDefault(x => x.UserAccountId == userAccountId);
 
-                return db.Categories.ToList();
-            }
+                     List<Category> categories = new List<Category>();
 
+                    foreach (Category item in db.Categories.ToList())
+                    {
+                        if (item.UserAccountId == userAccountId)
+                        {
+                            categories.Add(item);
+                        }
+
+                    }
+                    
+                    return categories;
+                }
         }
+         
 
-        public  Category UpdateCategory(Category category)
+        
+
+
+
+        public Category UpdateCategory(Category category)
         {
             if (category.Name != null)
             {
                 using (var db = new DataToDoListContext(Options()))
                 {
 
-                   db.Categories.Update(category);
-                   db.SaveChangesAsync();
+                    db.Categories.Update(category);
+                    db.SaveChangesAsync();
 
                 }
             }
             return category;
         }
+
         public async void DeleteCategory(int? id)
         {
 
@@ -96,16 +119,25 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 
         }
 
-        public List<Category> Categories(int userId)
+        public int Count(int userAccountId)
         {
             using (var db = new DataToDoListContext(Options()))
             {
+                int count = 0;
 
-                var getUser = db.Users.FirstOrDefault(x => x.Id == userId);
-                return null;
+                Category cateories = db.Categories.FirstOrDefault(x => x.UserAccountId == userAccountId);
+
+                foreach (var item in db.Categories.ToList())
+                {
+                    if (db.Categories.Contains(cateories))
+                    {
+                        ++count;
+                    }
+                }
+                return count;
             }
         }
 
-       
+
     }
 }

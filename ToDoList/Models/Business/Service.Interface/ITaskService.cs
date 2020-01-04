@@ -5,7 +5,7 @@ namespace ToDoList.Models.Business.Service.Interface
 {
    public interface ITaskService
     {
-        System.Threading.Tasks.Task<List<Task>> GetTaskList();
+        System.Threading.Tasks.Task<List<Task>> GetTaskList(int userAccountId);
 
         void GetCategoryTasksCount();
 
@@ -16,5 +16,6 @@ namespace ToDoList.Models.Business.Service.Interface
         void UpdateTask(Task item);
 
         void DeleteTask(int id);
+        int Count();
     }
 }

@@ -6,52 +6,87 @@ namespace ToDoList.Models.Helpers
 {
     public class CommonConverter
     {
-        public static User FromDalToBl(DataAccess.Dal.Entites.User user) =>
-           new User
-           {
-               Email = user.Email,
-               FirstName = user.FirstName,
-               LastName = user.LastName,
-               BirthDate = new DateTime(user.DateOfBirth.Year, user.DateOfBirth.Month, user.DateOfBirth.Day),
-               Age = DateTime.Today.Year - user.DateOfBirth.Year,
-               Password = user.Password,
-               ConfirmPassword = user.ConfirmPassword,
-               UserAccountid = user.UserAccountid
 
-           };
-        public static DataAccess.Dal.Entites.User FromBlToDal(User user) =>
-                new DataAccess.Dal.Entites.User
-                {
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    DateOfBirth = new DateTime(user.BirthDate.Year, user.BirthDate.Month, user.BirthDate.Day),
-                    Age = DateTime.Today.Year - user.BirthDate.Year,
-                    Password = user.Password,
-                    ConfirmPassword = user.ConfirmPassword,
-                    UserAccountid = new Random().Next(1, (int)1e+6) + 1
+    
 
-                };
-        public static Category FromDalToBl(DataAccess.Dal.Entites.Category category) =>
-      new Category
-      {
-          Id = category.Id,
-          Name = category.Name,
-      };
+        public static User FromDalToBl(DataAccess.Dal.Entites.User user ) {
+           
+        var obj=  new User 
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                BirthDate = new DateTime(user.DateOfBirth.Year, user.DateOfBirth.Month, user.DateOfBirth.Day),
+                Age = DateTime.Today.Year - user.DateOfBirth.Year,
+                Password = user.Password,
+                ConfirmPassword = user.ConfirmPassword,
+                UserAccountId = user.UserAccountId,
+                Phone = user.Phone
 
-        public static DataAccess.Dal.Entites.Category FromBlToDal(Category category) =>
-           new DataAccess.Dal.Entites.Category
-           {
-               Id = category.Id,
-               Name = category.Name,
-           };
+            };
+           
+
+
+
+            return obj;
+        }
+        public static DataAccess.Dal.Entites.User FromBlToDal(User user  ) {
+          
+            var obj= new DataAccess.Dal.Entites.User
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DateOfBirth = new DateTime(user.BirthDate.Year, user.BirthDate.Month, user.BirthDate.Day),
+                Age = DateTime.Today.Year - user.BirthDate.Year,
+                Password = user.Password,
+                ConfirmPassword = user.ConfirmPassword,
+                UserAccountId = new Random().Next(1, (int)1e+6) + 1,
+                Phone = user.Phone
+
+            };
+          
+            return obj;
+        }
+        public static Category FromDalToBl(DataAccess.Dal.Entites.Category category)
+        {
+
+            var obj =
+
+              new Category
+              {
+
+                  Id = category.Id,
+                  Name = category.Name, 
+                  UserAccountId = category.UserAccountId
+                
+                
+            };
+        
+           return obj;
+        }
+
+        public static DataAccess.Dal.Entites.Category FromBlToDal(Category category)
+        {
+            var obj =
+            new DataAccess.Dal.Entites.Category
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UserAccountId = category.UserAccountId
+
+            };
+            return obj;
+        }
+
         public static Task FromDalToBl(DataAccess.Dal.Entites.Task task) =>
           new Task
           {
               Id = task.Id,
               Name = task.Name,
               CategoryId = task.CategoryId,
-              CreateTime = DateTime.Now
+              CreateTime = DateTime.Now,
+              UserAccountId = task.UserAccountId
           };
 
         public static DataAccess.Dal.Entites.Task FromBlToDal(Task task) =>
@@ -59,8 +94,10 @@ namespace ToDoList.Models.Helpers
            {
                Id = task.Id,
                Name = task.Name,
-               CategoryId = task.CategoryId,
-               CreateTime = DateTime.Now
+               CategoryId =task.CategoryId,
+               CreateTime = DateTime.Now,
+               UserAccountId = task.UserAccountId
+               
            };
 
 
@@ -70,17 +107,6 @@ namespace ToDoList.Models.Helpers
         public static DataAccess.Dal.Entites.User.Role FromBlToDal(User.Role role) =>
          new DataAccess.Dal.Entites.User.Role();
 
-        public static Account FromBlToDal(DataAccess.Dal.Entites.Account account) =>
-        new Account
-        {
-            Id = account.Id
-        };
-
-        public static DataAccess.Dal.Entites.Account FromBlToDal(Account account) =>
-         new DataAccess.Dal.Entites.Account
-         {
-             Id = account.Id
-         };
 
         public static DataAccess.Dal.Entites.EmailSetting FromBlToDal(EmailSetting emailSetting) =>
           new DataAccess.Dal.Entites.EmailSetting

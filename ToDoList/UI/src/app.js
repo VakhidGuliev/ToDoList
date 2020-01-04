@@ -7,6 +7,7 @@ const btnCreateList = document.querySelector("#showCreateList");
 const listGroup = document.querySelector('.list-group');
 const tabContent = document.querySelector(".tab-content");
 const createTaskForm = document.forms.namedItem("AddTask");
+// const userEmail = document.querySelector("input#form-name");
 
 //controllers
 const categoryController = new CategoryController();
@@ -14,7 +15,9 @@ const taskController = new TaskController();
 
 // load data
 $(function () {
+    new ApiService().getUser();
     new ApiService().getCategories();
+    new ApiService().getTasks();
 });
 
 
@@ -27,12 +30,11 @@ listGroup.addEventListener("click", categoryController.switchCategory);
 
 
 //tasks
-
 createTaskForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
     taskController.createTask();
-})
+});
 
 
 

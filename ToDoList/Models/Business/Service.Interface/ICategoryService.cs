@@ -9,6 +9,7 @@ namespace ToDoList.Models.Business.Service.Interface
         bool CreateCategory(Category category);
         Category UpdateCategory(Category category, int userAccountId);
         void DeleteCategory(int? id);
-        List<Category> Categories();
+        int Count(int userAccountId);
+        List<Category> Categories(int? userAccountId);
     }
 }

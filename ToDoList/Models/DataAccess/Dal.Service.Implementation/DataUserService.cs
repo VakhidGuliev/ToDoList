@@ -1,22 +1,27 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
+﻿using System.Linq;
+
+namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using ToDoList.Models.DataAccess.Dal.Entites;
-    using ToDoList.Models.DataAccess.Dal.Service.Interface;
-    using ToDoList.Models.DataAccess.Data;
-    using ToDoList.Models.Helpers;
+    using Entites;
+    using Interface;
+    using Data;
+    using Helpers;
 
     public class DataUserService : IDataUserService
     {
         private readonly string _connectionString;
+        
 
         public DataUserService(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
+
+    
 
         public async void Create(User user)
         {
@@ -44,7 +49,39 @@
             {
                 return await db.Users.ToListAsync();
             }
+            
         }
+
+        public User GetUser(string email)
+        {
+            using (var db = new DataToDoListContext(Options()))
+            {
+                var user = db.Users.FirstOrDefault(x => x.Email == email);
+                return  db.Users.FirstOrDefault(x=>x.Email ==email);
+            }
+
+       
+        }
+
+        public string RegUserEmail()
+        {
+            return null;
+        }
+
+
+//        public string RegUserEmail()
+//        {
+//          
+//            using (var db = new DataToDoListContext(Options()))
+//            {
+//                
+//             
+//
+//         
+//
+//
+//            }
+//        }
 
         private DbContextOptions<DataToDoListContext> Options()
         {

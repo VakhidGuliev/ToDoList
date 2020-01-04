@@ -7,10 +7,8 @@
     public interface IDataTaskService
     {
 
-        Task<List<Task>> GetTaskList();
-
-        int GetCategoryTasksCountAll();
-
+        Task<List<Task>> GetTaskList(int userAccountId);
+        
         Task GetTask(int id); 
 
         void CreateTask(Task item);
@@ -18,6 +16,8 @@
         Task<Task> UpdateTask(Task item);
 
         void DeleteTask(int id);
+
+        int Count();
    
     }
 }

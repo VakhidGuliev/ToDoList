@@ -40,10 +40,10 @@ namespace ToDoList
 
             #region Data
              services.AddSingleton<IDataUserService, DataUserService>();
-             services.AddTransient<IDataAppRole, DataAppRoleService>();
-             services.AddTransient<IDataCategoryService, DataCategoryService>();
-             services.AddTransient<IDataTaskService, DataTaskService>();
-             services.AddTransient<IDataAccountService, DataAccountService>();
+             services.AddSingleton<IDataAppRole, DataAppRoleService>();
+             services.AddSingleton<IDataCategoryService, DataCategoryService>();
+             services.AddSingleton<IDataTaskService, DataTaskService>();
+             services.AddSingleton<IDataAccountService, DataAccountService>();
              services.AddSingleton<IDataEmailService, DataEmailSenderService>();
              services.Configure<EmailSetting>(Configuration.GetSection("EmailSetting"));
              services.AddDbContext<DataToDoListContext>(options =>
@@ -55,11 +55,11 @@ namespace ToDoList
             #region Business
             // services.AddTransient<IAuthenticationService, AuthenticationService>();
              services.AddSingleton<IUserService, UserService>();
-             services.AddTransient<ICategoryService, CategoryService>();
-             services.AddTransient<IAppRole, AppRoleService>();
-             services.AddTransient<ITaskService, TaskService>();
-             services.AddTransient<IAccountService, AccountService>();
-             services.AddTransient<IEmailService, EmailService>();
+             services.AddSingleton<ICategoryService, CategoryService>();
+             services.AddSingleton<IAppRole, AppRoleService>();
+             services.AddSingleton<ITaskService, TaskService>();
+             services.AddSingleton<IAccountService, AccountService>();
+             services.AddSingleton<IEmailService, EmailService>();
             #endregion
         }
         #endregion
@@ -82,6 +82,7 @@ namespace ToDoList
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

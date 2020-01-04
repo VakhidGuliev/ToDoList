@@ -1,37 +1,49 @@
-﻿namespace ToDoList.Controllers
-{
-   
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.EntityFrameworkCore;
-    using ToDoList.Models;
-    using ToDoList.Models.Business.Service.Interface;
-    using Task = Models.Business.Entites.Task;
+﻿using System.Diagnostics;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ToDoList.Models;
+using ToDoList.Models.Business.Entites;
+using ToDoList.Models.Business.Service.Interface;
+using ToDoList.Models.DataAccess.Dal.Service.Interface;
+using ToDoList.Models.DataAccess.Data;
+using Task = ToDoList.Models.Business.Entites.Task;
 
+namespace ToDoList.Controllers
+{
     public class HomeController : Controller
     {
-     
+
         private readonly ICategoryService _categoryService;
         private readonly ITaskService _taskService;
         private readonly IEmailService _emailService;
+        private readonly IDataAccountService _dataAccountService;
+        private DataToDoListContext _doListContext;
+        private int CategoryId { get; set; }
+        public string UserEmail { get; private set; }
+        public int UserAccountId { get; private set; }
 
         public HomeController
             (
-            
+
             ICategoryService categoryService,
             ITaskService taskService,
-            IEmailService emailService
+            IEmailService emailService,
+            IDataAccountService dataAccountService,
+            DataToDoListContext dataToDoListContext
            )
         {
 
             _categoryService = categoryService;
-           _taskService = taskService;
+            _taskService = taskService;
             _emailService = emailService;
-            
+            _dataAccountService = dataAccountService;
+            _doListContext = dataToDoListContext;
+
+
         }
 
         [Authorize(Roles = "Admin,User")]
@@ -41,7 +53,7 @@
             return View();
         }
 
-     
+
 
         //[HttpGet]
 
@@ -64,11 +76,12 @@
 
         [HttpPost]
 
-        public IActionResult CreateCategory(Models.Business.Entites.Category category)
+        public IActionResult CreateCategory(Category category)
         {
             Regex reg = new Regex(@"^([\d.,-]+)$");
-            var isCheck = false;
-          //  int userAccountId = ;
+            bool isCheck;
+
+            CategoryId = category.Id;
             if (!reg.IsMatch(category.Name))
             {
                 isCheck = _categoryService.CreateCategory(category);
@@ -88,7 +101,7 @@
 
         [HttpPut]
 
-        public JsonResult EditCategory(string name, int id, [Bind("Name")]Models.Business.Entites.Category category, int userAccoundId)
+        public JsonResult EditCategory(string name, int id, [Bind("Name")]Category category, int userAccoundId)
         {
 
             if (name != category.Name)
@@ -117,10 +130,30 @@
             return Json(category);
         }
         [HttpGet]
-
+      //  [Route("{/CategoryList/{id}}")]
         public JsonResult CategoryList()
         {
-            return Json(_categoryService.Categories().ToList());
+            var userAccountId = GetUserAccountId();
+            return Json(_categoryService.Categories(userAccountId).ToList());
+        }
+        string GetUserAccountEmail()
+        {
+
+            var email = HttpContext.User.Claims.FirstOrDefault().Value;
+
+            UserEmail = email;
+
+            return email;
+        }
+
+        int GetUserAccountId()
+        {
+
+            var getId = _doListContext.Users.FirstOrDefault(x => x.Email == GetUserAccountEmail()).UserAccountId;
+
+            UserAccountId = getId;
+
+            return getId;
         }
         //[HttpDelete]
 
@@ -141,12 +174,19 @@
         //    return _context.Categories.Any(e => e.Name == name);
         //}
 
+        [HttpGet]
+
+        public int CategoryCount(int userAccountId)
+        {
+           return _categoryService.Count(userAccountId);
+        }
+
         [HttpPost]
 
         public IActionResult CreateTask(Task task)
         {
             Regex reg = new Regex(@"^([\d.,-]+)$");
-         
+            task.UserAccountId = GetUserAccountId();
           if (!reg.IsMatch(task.Name))
             {
                 _taskService.CreateTask(task);
@@ -172,15 +212,13 @@
         }
 
         [HttpGet]
-
+       
         public JsonResult TaskList()
         {
-            return Json(_taskService.GetTaskList().Result.ToList());
+            return Json(_taskService.GetTaskList(GetUserAccountId()).Result.ToList());
         }
 
       
-        
-
         //[Required]
         //[BindProperty]
         //public string Email { get; set; }

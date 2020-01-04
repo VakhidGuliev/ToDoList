@@ -4,16 +4,16 @@ import {fbTransformToArray} from "./transform-service";
 
 class ApiService {
 
-    createCategory(categoryName) {
+    createCategory(data) {
         $.ajax({
             url: '/Home/CreateCategory',
             type: 'POST',
-            data: { Name: categoryName },
-            dataType: 'html',
-            success: function () {
+            data: data,
+            success: function (data) {
                 $(".invalid-feedback").hide();
                 $(".valid-feedback").show();
-                $(".valid-feedback").html(`Category ${categoryName} successfully created`);
+                $(".valid-feedback").html(`Category ${data.Name} successfully created`);
+                console.log("data : " + data);
                 new RenderService().renderCategory();
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -23,11 +23,12 @@ class ApiService {
             }
         });
     }
-    editCategory(id,newData) {
+
+    editCategory(id, newData) {
         $.ajax({
             url: '/Home/EditCategory',
             type: 'PUT',
-            data: { Id: id, Name: newData },
+            data: {Id: id, Name: newData},
             dataType: 'html',
             success: function (data) {
 
@@ -48,15 +49,16 @@ class ApiService {
             }
         });
     }
-    deleteCategory(id){
+
+    deleteCategory(id) {
         $.ajax({
             url: '/Home/DeleteCategory',
             type: 'DELETE',
-            data: { Id: id},
+            data: {Id: id},
             dataType: 'html',
             success: function () {
                 const Tab = new ModalService().Tabs();
-                
+
                 Tab.listContainer.querySelector(`a[data-id='${id}']`).remove();
                 Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).remove();
 
@@ -69,7 +71,7 @@ class ApiService {
                 const activeName = $("#myList a:first-child").attr("data-name");
 
                 document.querySelector(".categoriesName").innerHTML = activeName;
-                
+
                 $('#ListModal').modal('hide');
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -77,22 +79,23 @@ class ApiService {
             }
         });
     }
+
     getCategories() {
         $.ajax({
             url: '/Home/CategoryList',
             type: 'GET',
             success: function (data) {
-                
-                
+
+
                 const Tab = new ModalService().Tabs();
                 const TaskObject = data;
-                
-                
+
+
                 const promise = fbTransformToArray(TaskObject);
 
                 promise.then(function (arr) {
                     let objectKeys = Object.keys(TaskObject);
-                    
+
 
                     //Update database
                     document.querySelector("#myList").innerHTML = "";
@@ -100,7 +103,7 @@ class ApiService {
 
                     objectKeys.forEach((value, index, array) => {
                         array = arr;
-                        
+
                         const objs = array[value];
                         index = objs.id;
 
@@ -123,13 +126,43 @@ class ApiService {
             }
         });
     }
-    
+
     getTasks() {
         $.ajax({
             url: '/Home/TaskList',
             type: 'GET',
             success: function (data) {
-                console.log(data);
+                
+                for (const tasks in data){
+                    const task = data[tasks];
+                   document.querySelectorAll(`.tab-content .tab-pane`).forEach((value, key, parent) => {
+                        if (value.dataset.id === `${task.categoryId}`) {
+                            
+                            let template = `
+                                    <li class="task-item list-group-item list-group-item-light" data-value="${task.name}">
+                                    <input type="checkbox" class="isMarked" title="Mark as completed">
+                                    <span class="task-name" title="Edit Task">${task.name}</span>
+                                    <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
+                                    </li>`;
+
+                            value.insertAdjacentHTML("beforeend", template);
+                        }
+                    })
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+
+    createTask(data) {
+        $.ajax({
+            url: '/Home/CreateTask',
+            type: 'POST',
+            data: data,
+            success: function () {
+                console.log("задача создана");
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText)
@@ -137,16 +170,22 @@ class ApiService {
         });
     }
     
-    createTask(data){
+    getUser(){
         $.ajax({
-            url: '/Home/CreateTask',
-            type: 'POST',
-            data: data,
-            success: function () {
-               console.log("задача создана");
+            url: '/Account/GetUser',
+            type: 'GET',
+            success: function (User) {
+               console.log(User);
+
+                let accountForm = document.forms.namedItem("AccountSettings");
+                accountForm["UserAccountId"].value = User.userAccountId;
+                accountForm["user-name"].value = User.firstName;
+                accountForm["user-email"].value = User.email;
+                // accountForm["user-phone"].value = User.phone;
+                accountForm["user-password"].value = User.password;
             },
             error: function (xhr, ajaxOptions, thrownError) {
-               console.log(xhr.responseText)
+                console.log(xhr.responseText)
             }
         });
     }

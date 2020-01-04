@@ -6,7 +6,9 @@ class RenderService {
     renderCategory(){
         let category = {
             categoryName: document.querySelector("#createList").value.toString().trim(),
+           
         };
+        console.log("Categpryu: "+ category);
 
         const listForm = document.querySelector("#ListForm");
         let categoryName = document.querySelector("#createList");

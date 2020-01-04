@@ -14,7 +14,8 @@ namespace ToDoList.Models.DataAccess.Dal.Entites
         public string Name { get; set; }
         
         public int CategoryId { get; set; }
-
+        
+        public int UserAccountId { get; set; }
         public DateTime CreateTime { get; set; }
 
         public DateTime DurationTime { get; set; }

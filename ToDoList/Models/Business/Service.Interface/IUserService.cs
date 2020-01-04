@@ -9,5 +9,7 @@ namespace ToDoList.Models.Business.Service.Interface
            void Create(User authUser);
 
            Task <List<User>> GetRegistrationUsers();
+           User GetUser(string email);
+           string RegUserEmail();
     }
 }

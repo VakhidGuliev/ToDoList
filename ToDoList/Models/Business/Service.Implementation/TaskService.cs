@@ -18,6 +18,11 @@
             _dataTaskService = dataTaskService;
         }
 
+        public int Count()
+        {
+          return  _dataTaskService.Count();
+        }
+
         public async void CreateTask(Entites.Task item)
         {
            var convert = CommonConverter.FromBlToDal(item);
@@ -40,9 +45,9 @@
             throw new NotImplementedException();
         }
 
-        public async Task<List<Entites.Task>> GetTaskList()
+        public async Task<List<Entites.Task>> GetTaskList(int userAccountId)
         {
-            return await Task.Run(() => _dataTaskService.GetTaskList().Result.Select(CommonConverter.FromDalToBl).ToList());
+            return await Task.Run(() => _dataTaskService.GetTaskList(userAccountId).Result.Select(CommonConverter.FromDalToBl).ToList());
         }
 
         public void UpdateTask(Entites.Task item)

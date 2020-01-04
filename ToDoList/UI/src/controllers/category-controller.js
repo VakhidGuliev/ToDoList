@@ -1,5 +1,6 @@
 ﻿import ApiService from "../services/api-service";
 import ModalService from "../services/modal-service";
+import { log } from "util";
 
 class CategoryController {
     constructor() {}
@@ -17,10 +18,14 @@ class CategoryController {
 
         btnCreate.addEventListener("click", (e) => {
             e.preventDefault();
-
-            const categoryName = $("input[name='Name']").val();
-
-            new ApiService().createCategory(categoryName);
+            
+            const data = {
+                Name : $("input#createList").val(),
+                UserAccountId : $("input#UserAccountId").val(),
+            };
+            
+            console.log(data);
+            new ApiService().createCategory(data);
         });
     }
 
@@ -45,7 +50,7 @@ class CategoryController {
             const id = $(".list-group-item-action.active").attr("data-id");
 
             new ApiService().deleteCategory(id);
-        })
+        });
         btnEditSave.addEventListener("click", (e) => {
 
             e.preventDefault();

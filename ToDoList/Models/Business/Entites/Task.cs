@@ -13,7 +13,8 @@
         public DateTime CreateTime { get; set; }
 
         public DateTime DurationTime { get; set; }
-
+        
+        public int UserAccountId { get; set; }
         public int CategoryId { get; set; }
         
     }

@@ -18,8 +18,10 @@ namespace ToDoList.Models.Business.Entites
 
         public string ConfirmPassword { get; set; }
 
-        public  int UserAccountid { get; set; }
-
+        public  int UserAccountId { get; set; }
+        
+        public int Phone { get; set; }
+      
         public enum Role
         {
             Admin,

@@ -12,9 +12,9 @@ namespace ToDoList.Models.DataAccess.Dal.Entites
 
         public string Name { get; set; }
 
-        public  int UserAccountid { get; set; }
+        public  int UserAccountId { get; set; }
 
-        public Dictionary<int,Task> TasksList;
+      
 
         
     }

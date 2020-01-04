@@ -24,8 +24,8 @@ namespace ToDoList.Models.Business.Service.Implementation
             return _dataCategoryService.CreateCategory(convert);
         }
 
-        public List<Category> Categories() =>
-            _dataCategoryService.Categories().Select(CommonConverter.FromDalToBl).ToList();
+        public List<Category> Categories(int? userAccountId) =>
+            _dataCategoryService.Categories(userAccountId).Select(CommonConverter.FromDalToBl).ToList();
           
           public async void DeleteCategory(int? id)
         {
@@ -40,9 +40,9 @@ namespace ToDoList.Models.Business.Service.Implementation
             return CommonConverter.FromDalToBl(_dataCategoryService.UpdateCategory(convert));
         }
 
-
-
-
-       
+        public int Count(int userAccountId)
+        {
+           return _dataCategoryService.Count(userAccountId);
+        }
     }
 }

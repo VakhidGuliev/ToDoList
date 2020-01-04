@@ -9,6 +9,7 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
     using Helpers;
     using Task = Entites.Task;
     using System.Threading.Tasks;
+    using System.Linq;
 
     public class DataTaskService : IDataTaskService
     {
@@ -38,17 +39,7 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 
 
 
-        public int GetCategoryTasksCountAll()
-        {
-            var res = GetTaskList().Result;
-            int countAll = 0;
-
-            foreach (Task item in res)
-            {
-                ++countAll;
-            }
-            return countAll;
-        }
+      
 
 
         public void DeleteTask(int id)
@@ -68,11 +59,12 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             }
         }
 
-        public async Task<List<Task>> GetTaskList()
+        public async Task<List<Task>> GetTaskList(int  userAccountId )
         {
             using (var db = new DataToDoListContext(Options()))
             {
-                return await db.Tasks.ToListAsync();
+               return await db.Tasks.Where(x => x.UserAccountId == userAccountId).ToListAsync();
+                
             }
         }
 
@@ -88,6 +80,8 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             return item;
         }
 
+
+
         private DbContextOptions<DataToDoListContext> Options()
         {
             var optionsBuilder = new DbContextOptionsBuilder<DataToDoListContext>();
@@ -96,6 +90,24 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             return options;
         }
 
+        public int Count()
+        {
 
+            using (var db = new DataToDoListContext(Options()))
+            {
+                int count = 0;
+
+                List<Entites.Category> categories = db.Categories.ToList();
+
+                foreach (Task item in db.Tasks.ToList())
+                {
+                    if (item.CategoryId == categories.FirstOrDefault().Id)
+                    {
+                        ++count;
+                    }
+                }
+                return count;
+            }
+        }
     }
 }
