@@ -4,7 +4,7 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Interface
 {
     public interface IDataAppRole
     {
-      User.Role SetRole(string email, string password);
+        string SetRole(string email, string password);
    
     }
 }

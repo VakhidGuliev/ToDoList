@@ -63,6 +63,8 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
         {
             using (var db = new DataToDoListContext(Options()))
             {
+               var res = db.Tasks.Where(x => x.UserAccountId == userAccountId).ToList();
+      
                return await db.Tasks.Where(x => x.UserAccountId == userAccountId).ToListAsync();
                 
             }

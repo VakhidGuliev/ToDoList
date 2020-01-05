@@ -88,7 +88,7 @@ namespace ToDoList.Controllers
             {
                 identity = new ClaimsIdentity(new[] {
                   new Claim(ClaimTypes.Email, email),
-                  new Claim(ClaimTypes.Role, "User")
+                  new Claim(ClaimTypes.Role, role)
               }, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 isAuthenticated = true;

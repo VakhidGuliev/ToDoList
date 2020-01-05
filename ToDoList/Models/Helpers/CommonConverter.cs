@@ -7,11 +7,12 @@ namespace ToDoList.Models.Helpers
     public class CommonConverter
     {
 
-    
 
-        public static User FromDalToBl(DataAccess.Dal.Entites.User user ) {
-           
-        var obj=  new User 
+
+        public static User FromDalToBl(DataAccess.Dal.Entites.User user)
+        {
+
+            var obj = new User
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
@@ -24,15 +25,16 @@ namespace ToDoList.Models.Helpers
                 Phone = user.Phone
 
             };
-           
+
 
 
 
             return obj;
         }
-        public static DataAccess.Dal.Entites.User FromBlToDal(User user  ) {
-          
-            var obj= new DataAccess.Dal.Entites.User
+        public static DataAccess.Dal.Entites.User FromBlToDal(User user)
+        {
+
+            var obj = new DataAccess.Dal.Entites.User
             {
                 Email = user.Email,
                 FirstName = user.FirstName,
@@ -45,7 +47,7 @@ namespace ToDoList.Models.Helpers
                 Phone = user.Phone
 
             };
-          
+
             return obj;
         }
         public static Category FromDalToBl(DataAccess.Dal.Entites.Category category)
@@ -57,13 +59,13 @@ namespace ToDoList.Models.Helpers
               {
 
                   Id = category.Id,
-                  Name = category.Name, 
+                  Name = category.Name,
                   UserAccountId = category.UserAccountId
-                
-                
-            };
-        
-           return obj;
+
+
+              };
+
+            return obj;
         }
 
         public static DataAccess.Dal.Entites.Category FromBlToDal(Category category)
@@ -94,18 +96,28 @@ namespace ToDoList.Models.Helpers
            {
                Id = task.Id,
                Name = task.Name,
-               CategoryId =task.CategoryId,
+               CategoryId = task.CategoryId,
                CreateTime = DateTime.Now,
                UserAccountId = task.UserAccountId
-               
+
            };
+        public static AppRole FromDalToBl(DataAccess.Dal.Entites.AppRole appRole) =>
+          new AppRole
+          {
+              Name = appRole.Role,
+              Email = appRole.Role,
+              Role = appRole.Role,
+              Password = appRole.Password
+          };
 
-
-        public static User.Role FromDalToBl(DataAccess.Dal.Entites.User.Role role) =>
-        new User.Role();
-
-        public static DataAccess.Dal.Entites.User.Role FromBlToDal(User.Role role) =>
-         new DataAccess.Dal.Entites.User.Role();
+        public static DataAccess.Dal.Entites.AppRole FromBlToDal(AppRole appRole) =>
+        new DataAccess.Dal.Entites.AppRole
+        {
+            Name = appRole.Role,
+            Email = appRole.Role,
+            Role = appRole.Role,
+            Password = appRole.Password
+        };
 
 
         public static DataAccess.Dal.Entites.EmailSetting FromBlToDal(EmailSetting emailSetting) =>

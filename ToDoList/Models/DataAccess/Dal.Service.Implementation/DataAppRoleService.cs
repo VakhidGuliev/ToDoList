@@ -1,5 +1,7 @@
 ﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
     using System.Linq;
     using ToDoList.Models.DataAccess.Dal.Entites;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
@@ -7,23 +9,46 @@
 
     public class DataAppRoleService : IDataAppRole
     {
-        private readonly DataToDoListContext _context;
+        private readonly string _connectionString;
 
-        public DataAppRoleService(DataToDoListContext context)
+
+        public DataAppRoleService(IConfiguration configuration)
         {
-            _context = context;
+            _connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
 
-        public  User.Role SetRole(string email, string password)
+        public string SetRole(string email, string password)
         {
-            var setAdmin =  _context.Users.FirstOrDefault();
-            var selectAdmin = _context.Users.FirstOrDefault(x => x.Email == setAdmin.Email);
-            if (setAdmin != null && (selectAdmin != null && (email == selectAdmin.Email && password == setAdmin.Password)))
+            using (var db = new DataToDoListContext(Options()))
             {
-                return User.Role.Admin;
+                var Admin = db.Roles.First();
+
+                if (Admin != null && (Admin != null && (email == Admin.Email && password == Admin.Password)))
+                {
+                    return Admin.Role;
+                }
+                AppRole appRole = new AppRole
+                {
+                    Email = email,
+                    Password = password,
+                    Role = "User",
+                    Name = db.Users.FirstOrDefault(x => x.Email == email && x.Password == password).FirstName
+
+                };
+
+                db.Roles.Add(appRole);
+                db.SaveChanges();
+
+                return appRole.Role;
             }
 
-            return User.Role.User;
+        }
+        private DbContextOptions<DataToDoListContext> Options()
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<DataToDoListContext>();
+            var options = optionsBuilder.UseSqlServer(_connectionString)
+              .Options;
+            return options;
         }
     }
 }

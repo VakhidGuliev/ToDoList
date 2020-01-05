@@ -5,7 +5,7 @@ namespace ToDoList.Models.Business.Service.Interface
     public interface IAppRole
     {
         
-      User.Role SetRole(string email, string password);
+      string SetRole(string email, string password);
 
     }
 }

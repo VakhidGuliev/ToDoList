@@ -21,12 +21,6 @@ namespace ToDoList.Models.Business.Entites
         public  int UserAccountId { get; set; }
         
         public int Phone { get; set; }
-      
-        public enum Role
-        {
-            Admin,
-            User,
-            Moderator
-        }
+  
     }
 }
