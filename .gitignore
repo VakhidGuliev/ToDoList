@@ -39,13 +39,13 @@ TestResult.xml
 [Dd]ebugPS/
 [Rr]eleasePS/
 dlldata.c
-
+git rm --cached appsettings.json
+git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList\appsettings.json
+git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList\appsettings.Development.json
+git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList\appsettings.Release.json
 # DNX
 project.lock.json
 project.fragment.lock.json
-appsettings.json
-appsettings.Develompent.json
-appsettings.Release.json
 artifacts/
 
 *_i.c
@@ -113,6 +113,10 @@ _TeamCity*
 # DotCover is a Code Coverage Tool
 *.dotCover
 
+# Visual Studio code coverage results
+*.coverage
+*.coveragexml
+
 # NCrunch
 _NCrunch_*
 .*crunch*.local.xml
@@ -146,7 +150,7 @@ publish/
 *.azurePubxml
 # TODO: Comment the next line if you want to checkin your web deploy settings
 # but database connection strings (with potential passwords) will be unencrypted
-#*.pubxml
+*.pubxml
 *.publishproj
 
 # Microsoft Azure Web App publish settings. Comment the next line if you want to
@@ -262,9 +266,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-git rm --cached appsettings.json
-git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList/appsettings.json
-# ignore appsettings
-C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList/appsettings.json
 
-
+# Cake - Uncomment if you are using it
+# tools/
