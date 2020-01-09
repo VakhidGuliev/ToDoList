@@ -264,18 +264,7 @@ __pycache__/
 *.pyc
 git rm --cached appsettings.json
 git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList/appsettings.json
-**/appsettings.json
 # ignore appsettings
-**/appsettings.development.json
-**/appsettings.staging.json
-**/appsettings.production.json
+C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList/appsettings.json
 
-# ignore connectionstrings
-**/connectionstrings.development.json
-**/connectionstrings.staging.json
-**/connectionstrings.production.json
 
-# ignore mailsettings
-**/mailsettings.development.json
-**/mailsettings.staging.json
-**/mailsettings.production.json
