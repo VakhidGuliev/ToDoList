@@ -43,6 +43,7 @@ git rm --cached appsettings.json
 git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList\appsettings.json
 git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList\appsettings.Development.json
 git rm C:\Users\Vakhid-PK\RiderProjects\ToDoList\ToDoList\appsettings.Release.json
+.json
 # DNX
 project.lock.json
 project.fragment.lock.json
