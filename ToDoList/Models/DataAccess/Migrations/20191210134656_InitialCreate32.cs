@@ -27,9 +27,9 @@ namespace ToDoList.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: false)
+                    Name = table.Column<string>()
                 },
                 constraints: table =>
                 {
@@ -40,10 +40,10 @@ namespace ToDoList.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Email = table.Column<string>(nullable: true),
-                    Password = table.Column<string>(nullable: false)
+                    Password = table.Column<string>()
                 },
                 constraints: table =>
                 {

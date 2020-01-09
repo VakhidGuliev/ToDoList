@@ -148,11 +148,6 @@ a.list-group-item {
     flex-wrap: wrap;
 }
 
-.modal-right .buttons{
-    position: absolute;
-    bottom: 0;
-    right: 10px;
-}
 
 .Settings-list{
     width: 20%;
@@ -211,4 +206,25 @@ span.valid-feedback {
 span.invalid-feedback {
     font-size: 100% !important;
     font-weight: bold;
+}
+
+i.fa.fa-list-ul {
+    margin-right: 5px;
+}
+.fade:not(.show){
+    opacity: 1;
+}
+
+div#fullHeightModalRight.fade.in {
+    opacity: 1;
+}
+
+i.fas.fa-pencil-alt.prefix{
+    font-size: 14px;
+}
+.modal-footer {
+    justify-content: flex-start !important;
+}
+textarea#note {
+    padding-top: 0 !important;
 }

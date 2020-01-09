@@ -1,7 +1,11 @@
-﻿namespace ToDoList.Models.Business.Service.Interface
+﻿using System.Threading.Tasks;
+
+namespace ToDoList.Models.Business.Service.Interface
 {
-    // Not using
-    public class IAccountService
+        
+    public interface IAccountService
     {
+        Task<int> SetUserAccountId(string email, string password);
     }
+
 }

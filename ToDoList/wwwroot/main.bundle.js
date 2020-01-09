@@ -98,7 +98,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! util */ "./node_modules/util/util.js");
 /* harmony import */ var util__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(util__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _services_validate_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../services/validate-service */ "./UI/src/services/validate-service.js");
+/* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/api-service */ "./UI/src/services/api-service.js");
 ﻿
+
 
 
 
@@ -147,7 +149,9 @@ class FormController {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_form_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/form-controller */ "./UI/src/controllers/form-controller.js");
+/* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/api-service */ "./UI/src/services/api-service.js");
 ﻿
+
 
 
 const form = document.querySelector('form');
@@ -155,6 +159,519 @@ const formController = new _controllers_form_controller__WEBPACK_IMPORTED_MODULE
 
 formController.validate();
 formController.submit();
+
+
+/***/ }),
+
+/***/ "./UI/src/services/api-service.js":
+/*!****************************************!*\
+  !*** ./UI/src/services/api-service.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _modal_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-service */ "./UI/src/services/modal-service.js");
+/* harmony import */ var _render_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./render-service */ "./UI/src/services/render-service.js");
+/* harmony import */ var _transform_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./transform-service */ "./UI/src/services/transform-service.js");
+﻿
+
+
+
+class ApiService {
+
+    createCategory(data) {
+        $.ajax({
+            url: '/Home/CreateCategory',
+            type: 'POST',
+            data: data,
+            success: function (data) {
+                $(".invalid-feedback").hide();
+                $(".valid-feedback").show();
+                $(".valid-feedback").html(`Category ${data.Name} successfully created`);
+                console.log("data : " + data);
+                new _render_service__WEBPACK_IMPORTED_MODULE_1__["default"]().renderCategory();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                $(".valid-feedback").hide();
+                $(".invalid-feedback").show();
+                $(".invalid-feedback").html(xhr.responseText)
+            }
+        });
+    }
+
+    editCategory(id, newData) {
+        $.ajax({
+            url: '/Home/EditCategory',
+            type: 'PUT',
+            data: {Id: id, Name: newData},
+            dataType: 'html',
+            success: function (data) {
+
+                const newData = JSON.parse(data);
+                const newName = newData.name;
+                const Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).querySelector(".listName").innerHTML = newName;
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).setAttribute(`data-name`, `${newName}`);
+                Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).setAttribute(`data-name`, `${newName}`);
+
+                document.querySelector(".categoriesName").innerHTML = newName;
+
+                $('#ListModal').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    deleteCategory(id) {
+        $.ajax({
+            url: '/Home/DeleteCategory',
+            type: 'DELETE',
+            data: {Id: id},
+            dataType: 'html',
+            success: function () {
+                const Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+
+                Tab.listContainer.querySelector(`a[data-id='${id}']`).remove();
+                Tab.tabContainer.querySelector(`.tab-pane[data-id='${id}']`).remove();
+
+                document.querySelector(".categoriesName").innerHTML = "";
+
+
+                $("#myList a:first-child").addClass("active")
+                $(".tab-content .tab-pane:first-child").addClass("active");
+
+                const activeName = $("#myList a:first-child").attr("data-name");
+
+                document.querySelector(".categoriesName").innerHTML = activeName;
+
+                $('#ListModal').modal('hide');
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    getCategories() {
+        $.ajax({
+            url: '/Home/CategoryList',
+            type: 'GET',
+            success: function (data) {
+
+
+                const Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+                const TaskObject = data;
+
+
+                const promise = Object(_transform_service__WEBPACK_IMPORTED_MODULE_2__["fbTransformToArray"])(TaskObject);
+
+                promise.then(function (arr) {
+                    let objectKeys = Object.keys(TaskObject);
+
+
+                    //Update database
+                    document.querySelector("#myList").innerHTML = "";
+                    document.querySelector(".tab-content").innerHTML = "";
+
+                    objectKeys.forEach((value, index, array) => {
+                        array = arr;
+
+                        const objs = array[value];
+                        index = objs.id;
+
+                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, objs.taskCounts));
+                        Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(objs.name, index));
+
+                        Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
+                        Tab.tabContainer.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("active"));
+
+                        document.querySelector("#myList a:first-child").classList.add("active");
+                        document.querySelector(".tab-content .tab-pane:first-child").classList.add("active");
+
+                        document.querySelector(".categoriesName").innerHTML = array[0].name;
+                    });
+                }).catch(e => console.log(e.message));
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+
+    getTasks() {
+        $.ajax({
+            url: '/Home/TaskList',
+            type: 'GET',
+            success: function (data) {
+
+                for (const tasks in data) {
+                    const task = data[tasks];
+                    document.querySelectorAll(`.tab-content .tab-pane`).forEach((value, key, parent) => {
+                        if (value.dataset.id === `${task.categoryId}`) {
+
+                            let template = `
+                                    <li class="task-item list-group-item list-group-item-light" data-id="${task.id}" data-note="${task.note}" data-date="${task.durationDate}" data-time="${task.durationTime}" data-value="${task.name}">
+                                    <input type="checkbox" class="isMarked" title="Mark as completed">
+                                    <span class="task-name" title="Edit Task">${task.name}</span>
+                                    <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
+                                    </li>`;
+
+                            value.insertAdjacentHTML("beforeend", template);
+                        }
+                    })
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+
+    createTask(data) {
+        $.ajax({
+            url: '/Home/CreateTask',
+            type: 'POST',
+            data: data,
+            success: function () {
+
+                let template = `
+               <li class="task-item list-group-item list-group-item-light" data-id="${data.Id}" data-value="${data.Name}">
+                    <input type="checkbox" class="isMarked" title="Mark as completed">
+                    <span class="task-name" title="Edit Task">${data.Name}</span>
+                    <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
+               </li>`;
+
+                document.querySelector(".tab-pane.active").insertAdjacentHTML("afterbegin", template);
+                $("form[name='AddTask']").find("input#name").val("");
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+
+    deleteTask(id) {
+        $.ajax({
+            url: '/Home/DeleteTask',
+            type: 'DELETE',
+            data: {Id: id},
+            dataType: 'html',
+            success: function () {
+
+                $(`li.task-item[data-id='${id}']`).remove();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    updateTask(newData) {
+        $.ajax({
+            url: '/Home/UpdateTask',
+            type: 'PUT',
+            data: newData,
+            success: function (newData) {
+                
+                let taskName = document.querySelector("#taskName");
+                let taskNote = document.querySelector("#note");
+                let taskDate = document.querySelector("#date-picker");
+                let taskTime = document.querySelector("#input_starttime");
+
+                taskName.value = newData.Name;
+                taskDate.value = newData.DurationDate;
+                taskTime.value = newData.DurationTime;
+                taskNote.innerHTML = newData.Note;
+
+                $('#fullHeightModalRight').modal('hide');
+                document.forms.namedItem("EditTask").reset();
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    getUser() {
+        $.ajax({
+            url: '/Account/GetUser',
+            type: 'GET',
+            success: function (User) {
+                console.log(User);
+
+                let accountForm = document.forms.namedItem("AccountSettings");
+                accountForm["UserAccountId"].value = User.userAccountId;
+                accountForm["user-name"].value = User.firstName;
+                accountForm["user-email"].value = User.email;
+                // accountForm["user-phone"].value = User.phone;
+                accountForm["user-password"].value = User.password;
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText)
+            }
+        });
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (ApiService);
+
+/***/ }),
+
+/***/ "./UI/src/services/modal-service.js":
+/*!******************************************!*\
+  !*** ./UI/src/services/modal-service.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class ModalService {
+
+    constructor() {
+        this.listForm = document.querySelector("#ListForm");
+        this.listName = document.querySelector("input.listName");
+        this.modalButtons = document.querySelector(".modal-footer .buttons");
+        this.modalTitle = document.querySelector("#ListModalTitle");
+    }
+
+
+    CreateCategory() {
+
+        //open modal
+        $("#ListModal").modal("show");
+
+        this.modalButtons.innerHTML = "";
+
+        //buttons template
+        let buttons = `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                       <button type="submit" class="btn btn-primary create">Save</button>`;
+        this.modalButtons.insertAdjacentHTML("afterbegin", buttons);
+
+        //modal options
+        this.listForm.name = "createListForm";
+        this.modalTitle.innerHTML = "Create New List";
+        this.listName.id = "createList";
+        this.listName.setAttribute("value", "");
+    }
+    EditCategory(e) {
+
+        let link = e.target;
+        let currentList = link.parentElement.parentElement;
+        let currentListName = currentList.getAttribute("data-name");
+
+
+        if (!link.classList.contains("fa-edit")) {
+            return;
+        }
+
+        //open modal
+        $("#ListModal").modal("show");
+
+        this.modalButtons.innerHTML = "";
+
+        //buttons template
+        let buttons = `<button type="submit" style="position:absolute;left:30px;" class="btn btn-danger btn-delete">Delete</button>
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                       <button type="submit" class="btn btn-primary save">Save</button>`;
+        this.modalButtons.insertAdjacentHTML("afterbegin", buttons);
+
+        //modal options
+        this.listForm.name = "editListForm";
+        this.modalTitle.innerHTML = "Edit List";
+        this.listName.id = "editList";
+        this.listName.setAttribute("value", currentListName);
+    }
+
+
+    Tabs() {
+        return {
+            listContainer: document.querySelector("#myList"),
+            tabContainer: document.querySelector(".tab-content"),
+            renderLists: function (list, index, array) {
+                return `<a class="list-group-item list-group-item-action" data-name="${list}" data-id="${index}" role="tab">
+                                <span class="listName"><i class="fa fa-list-ul"></i>${list}</span>
+                                <span class="listCount badge badge-primary" title="Task count">${array}</span>
+                                <span class="editList" title="List options"><i class="fa fa-edit"></i></span>
+                            </a>`
+            },
+            renderTabs: function (tab, index) {
+                return `<div class="tab-pane"  data-name="${tab}" data-id="${index}" role="tabpanel"></div>`
+            }
+        };
+    }
+    showTab (e) {
+        let link = e.target;
+
+        if (!link.classList.contains('list-group-item')) {
+            return;
+        }
+
+        let linkName = link.dataset.name;
+        let listSearch = document.querySelector(".tab-content .searchList");
+
+        document.querySelectorAll('.tab-pane, .list-group-item').forEach(el => {
+            el.classList.remove("active");
+        });
+
+        document.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("hide"));
+        document.querySelectorAll(".tab-pane.active").forEach(value => value.classList.add("show"));
+
+        if (listSearch) {
+            listSearch.remove();
+        }
+
+
+        link.classList.add("active");
+        document.querySelector(`.tab-pane[data-name='${linkName}']`).classList.add("active");
+        document.querySelector(".categoriesName").innerHTML = linkName;
+        document.querySelector(".AddTask").style.display = "block";
+    }
+    showAccountTab(e) {
+
+    let link = e.target;
+
+    if (!link.classList.contains('setting-list-item')) {
+        return;
+    }
+
+    let linkName = link.dataset.name;
+
+    document.querySelectorAll('.setting-tab-pane, .setting-list-item').forEach(el => {
+        el.classList.remove("active");
+    });
+    link.classList.add("active");
+    document.querySelector(`.setting-tab-pane[id=${linkName}]`).classList.add("active");
+
+    }
+
+    showTaskModal(e) {
+
+    let taskName = document.querySelector("#taskName");
+    let taskNote = document.querySelector("#note");
+    let taskDate = document.querySelector("#date-picker");
+    let taskTime = document.querySelector("#input_starttime");
+
+    let currentTaskItem = e.target;
+    let currentTaskName = currentTaskItem.getAttribute("data-value");
+    let currentTaskId = currentTaskItem.getAttribute("data-id");
+    let currentTaskNote = currentTaskItem.getAttribute("data-note");
+    let currentTaskDate = currentTaskItem.getAttribute("data-date");
+    let currentTaskTime = currentTaskItem.getAttribute("data-time");
+
+    if (!currentTaskItem.classList.contains('task-item')) {
+        return;
+    }
+
+    $('#fullHeightModalRight').modal('show');
+    taskName.value = currentTaskName;
+    taskDate.value = currentTaskDate;
+    taskTime.value = currentTaskTime;
+    taskNote.innerHTML = currentTaskNote;
+    taskName.setAttribute("data-id", currentTaskId);
+}
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (ModalService);
+
+/***/ }),
+
+/***/ "./UI/src/services/render-service.js":
+/*!*******************************************!*\
+  !*** ./UI/src/services/render-service.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _modal_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal-service */ "./UI/src/services/modal-service.js");
+
+
+class RenderService {
+    constructor(){}
+    
+    renderCategory(){
+        let category = {
+            categoryName: document.querySelector("#createList").value.toString().trim(),
+           
+        };
+
+        const listForm = document.querySelector("#ListForm");
+        let categoryName = document.querySelector("#createList");
+        let tabNameLength = document.querySelector(`.tab-content .tab-pane[id="${category.categoryName}"]`);
+        let listLength = document.querySelectorAll("#myList a").length;
+        const lastId = parseInt($(".list-group a:last-child").attr("data-id"));
+        const newId = (lastId + 1).toString();
+
+
+        if (category.categoryName && isNaN(category.categoryName) && tabNameLength === null) {
+
+            let Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
+
+            // render
+            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, newId, category.taskCounts));
+            Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, newId));
+
+            //delete active class
+            Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
+            Tab.tabContainer.querySelectorAll(".tab-pane").forEach(value => value.classList.remove("active"));
+
+            //add active class created category
+            Tab.listContainer.querySelector(`a[data-name=${category.categoryName}]`).classList.add("active");
+            Tab.tabContainer.querySelector(`.tab-pane[data-name=${category.categoryName}]`).classList.add("active");
+
+            document.querySelector(".categoriesName").innerHTML = category.categoryName;
+
+            // valid categoryName
+            categoryName.classList.remove("is-invalid");
+            categoryName.classList.add("is-valid");
+
+            listForm.reset();
+
+            $(".valid-feedback").html("");
+            $(".invalid-feedback").html("");
+
+            $('#ListModal').modal('hide');
+        } else {
+            categoryName.classList.add("is-invalid");
+            return false;
+        }
+    }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (RenderService);
+
+/***/ }),
+
+/***/ "./UI/src/services/transform-service.js":
+/*!**********************************************!*\
+  !*** ./UI/src/services/transform-service.js ***!
+  \**********************************************/
+/*! exports provided: fbTransformToArray */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fbTransformToArray", function() { return fbTransformToArray; });
+// transform firebase data to object=>
+async function fbTransformToArray(fbData) {
+    return Object.keys(fbData).map(function (value) {
+        const item = fbData[value];
+
+        item.tasksCount = Object.keys(item).length-1;
+        return item;
+    })
+}
+
+
 
 /***/ }),
 

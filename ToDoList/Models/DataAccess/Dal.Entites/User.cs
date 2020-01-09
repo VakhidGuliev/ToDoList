@@ -7,6 +7,10 @@
     {
         public int Id { get; set; }
 
+        public int UserAccountId { get; set; }
+
+        public int Phone { get; set; }
+
         [StringLength(100)]
 
         [EmailAddress(ErrorMessage = "Email not correct")]

@@ -18,11 +18,8 @@
 
         public string ConfirmPassword { get; set; }
 
-        public enum Role
-        {
-            Admin,
-            User,
-            Moderator
-        }
+        public int UserAccountId { get; set; }
+
+        public int Phone { get; set; }
     }
 }

@@ -1,9 +1,9 @@
 ﻿namespace ToDoList.Models.DataAccess.Dal.Service.Interface
 {
-    #region  IDataAccount Service
-    public class IDataAccountService
-    {
-    }
-    #endregion
+    using System.Threading.Tasks;
 
+    public interface IDataAccountService
+    {
+        Task<int> SetUserAccountId(string email, string password);
+    }
 }

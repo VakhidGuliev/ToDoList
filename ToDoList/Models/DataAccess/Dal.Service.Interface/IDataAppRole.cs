@@ -1,10 +1,10 @@
-﻿namespace ToDoList.Models.DataAccess.Dal.Service.Interface
-{
-    using ToDoList.Models.DataAccess.Dal.Entites;
+﻿// <copyright file="IDataAppRole.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
+namespace ToDoList.Models.DataAccess.Dal.Service.Interface
+{
     public interface IDataAppRole
     {
-       User.Role SetRole(string email, string password);
-   
     }
 }

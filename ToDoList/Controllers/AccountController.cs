@@ -1,105 +1,111 @@
-﻿namespace CookieDemo.Controllers
+﻿namespace ToDoList.Controllers
 {
     using System.Linq;
     using System.Security.Claims;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Mvc;
     using ToDoList.Models.Business.Entites;
     using ToDoList.Models.Business.Service.Interface;
+    using ToDoList.Models.DataAccess.Dal.Service.Interface;
     using ToDoList.Models.DataAccess.Data;
     using ToDoList.Models.Helpers;
+    using Task = System.Threading.Tasks.Task;
 
     public class AccountController : Controller
     {
-        private readonly IUserService userService;
-        private readonly IAppRole appRole;
-        private readonly DataToDoListContext context;
+        private readonly IUserService _userService;
+        private readonly IDataAccountService _dataAccountService;
+        private DataToDoListContext _doListContext;
 
         public AccountController(IUserService userService,
-                               IAppRole appRole,
-                               DataToDoListContext context)
+                                 IAccountService accountService,
+                                 IDataAccountService dataAccountService,
+                                 DataToDoListContext doListContext)
         {
-            this.userService = userService;
-            this.appRole = appRole;
-            this.context = context;
+            _userService = userService;
+            _dataAccountService = dataAccountService;
+            _doListContext = doListContext;
         }
 
         public IActionResult Registration() =>
-               this.View();
+               View();
 
         [HttpPost]
-        public IActionResult CreateUser([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]User authUser)
+        public async Task<IActionResult> CreateUser([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]User authUser)
         {
             try
             {
-                if (this.ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
-
-                    this.userService.Create(authUser);
+                    await Task.Run(() => this._userService.Create(authUser));
                 }
             }
             catch (AppException ex)
             {
-                return this.BadRequest(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
 
-            return this.RedirectToAction(nameof(this.Login));
+            return RedirectToAction(nameof(this.Login));
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public async Task<IActionResult> Login(string email, string password)
         {
-            
-          if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View();
+
+            var userId = await Task.Run(() => _dataAccountService.SetUserAccountId(email, password));
+
+            if (userId == 0) return View();
+
+            var isAdmin = _doListContext.Roles.Any(x => x.Email == email && x.Password == password);
+
+            ClaimsIdentity identity = null;
+
+            var isAuthenticated = false;
+
+            if (isAdmin)
             {
-                var user = this.context.Users.Where(x => x.Email == email && x.Password == password)?.FirstOrDefault();
-
-              
-                if (user != null)
-                {
-                    var role = appRole.SetRole(email, password).ToString();
-
-                    ClaimsIdentity identity = null;
-                    bool isAuthenticated = false;
-
-                    if (role.Equals("Admin"))
+                identity = new ClaimsIdentity(
+                    new[]
                     {
+                  new Claim(ClaimTypes.Email, email),
+                  new Claim(ClaimTypes.Role, "Admin"),
+                    }, CookieAuthenticationDefaults.AuthenticationScheme);
 
-
-                        identity = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, "Admin")
-                }, CookieAuthenticationDefaults.AuthenticationScheme);
-                      
-
-                        isAuthenticated = true;
-                    }
-
-                    if (!role.Equals("Admin"))
-                    {
-
-                        identity = new ClaimsIdentity(new[] {
-                    new Claim(ClaimTypes.Email, email),
-                    new Claim(ClaimTypes.Role, "User")
-                }, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                        isAuthenticated = true;
-                    }
-
-                    if (isAuthenticated)
-                    {
-                        var principal = new ClaimsPrincipal(identity);
-
-                        var login = HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-                        return RedirectToAction("Index", "Home");
-                    }
-                }
+                isAuthenticated = true;
             }
-         
-            
-            return View();
+
+            if (!isAdmin)
+            {
+                identity = new ClaimsIdentity(
+                    new[] {
+                  new Claim(ClaimTypes.Email, email),
+                  new Claim(ClaimTypes.Role, "User"),
+              }, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                isAuthenticated = true;
+            }
+
+            if (!isAuthenticated)
+            {
+                return this.View();
+            }
+
+            var principal = new ClaimsPrincipal(identity);
+            await this.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            return this.RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public JsonResult GetUser()
+        {
+            var mail = HttpContext.User.Claims.FirstOrDefault()?.Value;
+
+            var user = _doListContext.Users.FirstOrDefault(x => x.Email == mail);
+
+            return Json(user);
         }
 
         public IActionResult Login()
@@ -107,11 +113,10 @@
             return View();
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            this.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return this.RedirectToAction("Login");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login");
         }
-
     }
 }

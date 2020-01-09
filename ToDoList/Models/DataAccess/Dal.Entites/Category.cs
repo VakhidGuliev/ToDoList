@@ -9,5 +9,9 @@ namespace ToDoList.Models.DataAccess.Dal.Entites
         [Required]
 
         public string Name { get; set; }
+
+        public  int UserAccountId { get; set; }
+
+        public int TaskCounts { get; set; }
     }
 }
