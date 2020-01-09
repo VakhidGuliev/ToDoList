@@ -34,7 +34,7 @@ namespace ToDoList.Migrations
                 name: "Accounts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn)
                 },
                 constraints: table =>

@@ -97,7 +97,12 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./controllers/category-controller */ "./UI/src/controllers/category-controller.js");
 /* harmony import */ var _services_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./services/api-service */ "./UI/src/services/api-service.js");
-/* harmony import */ var _controllers_task_controller__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controllers/task-controller */ "./UI/src/controllers/task-controller.js");
+/* harmony import */ var _services_modal_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/modal-service */ "./UI/src/services/modal-service.js");
+/* harmony import */ var _controllers_task_controller__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./controllers/task-controller */ "./UI/src/controllers/task-controller.js");
+/* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! timers */ "./node_modules/timers-browserify/main.js");
+/* harmony import */ var timers__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(timers__WEBPACK_IMPORTED_MODULE_4__);
+
+
 
 
 
@@ -106,18 +111,27 @@ __webpack_require__.r(__webpack_exports__);
 const btnCreateList = document.querySelector("#showCreateList");
 const listGroup = document.querySelector('.list-group');
 const tabContent = document.querySelector(".tab-content");
+const settingList = document.querySelector(".Settings-list");
 const createTaskForm = document.forms.namedItem("AddTask");
-// const userEmail = document.querySelector("input#form-name");
+const editTaskForm = document.forms.namedItem("EditTask");
 
 //controllers
 const categoryController = new _controllers_category_controller__WEBPACK_IMPORTED_MODULE_0__["default"]();
-const taskController = new _controllers_task_controller__WEBPACK_IMPORTED_MODULE_2__["default"]();
+const taskController = new _controllers_task_controller__WEBPACK_IMPORTED_MODULE_3__["default"]();
+
+//services
+const modalService = new _services_modal_service__WEBPACK_IMPORTED_MODULE_2__["default"]();
 
 // load data
 $(function () {
     new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getUser();
-    new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getCategories();
-    new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getTasks();
+
+    Object(timers__WEBPACK_IMPORTED_MODULE_4__["setTimeout"])(function () {
+        new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getCategories();
+    }, 500);
+    Object(timers__WEBPACK_IMPORTED_MODULE_4__["setTimeout"])(function () {
+        new _services_api_service__WEBPACK_IMPORTED_MODULE_1__["default"]().getTasks();
+    },1000)
 });
 
 
@@ -130,21 +144,14 @@ listGroup.addEventListener("click", categoryController.switchCategory);
 
 
 //tasks
-createTaskForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    taskController.createTask();
-});
+createTaskForm.addEventListener("submit", taskController.createTask);
+tabContent.addEventListener("click", taskController.deleteTask);
+editTaskForm.addEventListener("submit", taskController.updateTask);
 
 
-
-
-
-
-
-
-
-    
+//tabs
+settingList.addEventListener("click", modalService.showAccountTab);
+tabContent.addEventListener("click", modalService.showTaskModal);    
 
 
 
@@ -228,7 +235,7 @@ class CategoryController {
             e.preventDefault();
 
             
-            const categoryName = $("input[name='Name']").val();
+            const categoryName = $("input#editList").val();
             const id = $(".list-group-item-action.active").attr("data-id");
             
             new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().editCategory(id,categoryName);
@@ -262,14 +269,39 @@ class TaskController {
     constructor() {
     }
 
-    editTask() {
+    updateTask(e) {
+
+        e.preventDefault();
+        
+        let newData = {
+            Id : document.querySelector("#taskName").getAttribute("data-id"),
+            Name: document.querySelector("#taskName").value,
+            Note: document.querySelector("#note").value,
+            CategoryId : document.querySelector(".tab-pane.active").getAttribute("data-id"),
+            UserAccountId: document.querySelector("input#UserAccountId").value,
+            DurationDate : document.querySelector("#date-picker").value,
+            DurationTime : document.querySelector("#input_starttime").value,
+            CreateTime : new Date().getDate().toString(),
+            Favorites : false,
+        };
+        
+        new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().updateTask(newData);
     }
 
-    deleteTask() {
+    deleteTask(e) {
+        if (e.target.classList.contains("btn_delete")) {
+            e.stopPropagation();
+
+            const taskId = e.target.parentElement.parentElement.getAttribute("data-id");
+
+            new _services_api_service__WEBPACK_IMPORTED_MODULE_0__["default"]().deleteTask(taskId);
+        }
     }
 
-    createTask() {
+    createTask(e) {
 
+        e.preventDefault();
+        
         const taskData = {
             'Name': $("form[name='AddTask']").find("input[name='Name']").val(),
             'Description': "",
@@ -405,7 +437,7 @@ class ApiService {
                         const objs = array[value];
                         index = objs.id;
 
-                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, 0));
+                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, objs.taskCounts));
                         Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(objs.name, index));
 
                         Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
@@ -430,14 +462,14 @@ class ApiService {
             url: '/Home/TaskList',
             type: 'GET',
             success: function (data) {
-                
-                for (const tasks in data){
+
+                for (const tasks in data) {
                     const task = data[tasks];
-                   document.querySelectorAll(`.tab-content .tab-pane`).forEach((value, key, parent) => {
+                    document.querySelectorAll(`.tab-content .tab-pane`).forEach((value, key, parent) => {
                         if (value.dataset.id === `${task.categoryId}`) {
-                            
+
                             let template = `
-                                    <li class="task-item list-group-item list-group-item-light" data-value="${task.name}">
+                                    <li class="task-item list-group-item list-group-item-light" data-id="${task.id}" data-note="${task.note}" data-date="${task.durationDate}" data-time="${task.durationTime}" data-value="${task.name}">
                                     <input type="checkbox" class="isMarked" title="Mark as completed">
                                     <span class="task-name" title="Edit Task">${task.name}</span>
                                     <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
@@ -460,20 +492,72 @@ class ApiService {
             type: 'POST',
             data: data,
             success: function () {
-                console.log("задача создана");
+
+                let template = `
+               <li class="task-item list-group-item list-group-item-light" data-id="${data.Id}" data-value="${data.Name}">
+                    <input type="checkbox" class="isMarked" title="Mark as completed">
+                    <span class="task-name" title="Edit Task">${data.Name}</span>
+                    <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
+               </li>`;
+
+                document.querySelector(".tab-pane.active").insertAdjacentHTML("afterbegin", template);
+                $("form[name='AddTask']").find("input#name").val("");
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText)
             }
         });
     }
-    
-    getUser(){
+
+    deleteTask(id) {
+        $.ajax({
+            url: '/Home/DeleteTask',
+            type: 'DELETE',
+            data: {Id: id},
+            dataType: 'html',
+            success: function () {
+
+                $(`li.task-item[data-id='${id}']`).remove();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    updateTask(newData) {
+        $.ajax({
+            url: '/Home/UpdateTask',
+            type: 'PUT',
+            data: newData,
+            success: function (newData) {
+                
+                let taskName = document.querySelector("#taskName");
+                let taskNote = document.querySelector("#note");
+                let taskDate = document.querySelector("#date-picker");
+                let taskTime = document.querySelector("#input_starttime");
+
+                taskName.value = newData.Name;
+                taskDate.value = newData.DurationDate;
+                taskTime.value = newData.DurationTime;
+                taskNote.innerHTML = newData.Note;
+
+                $('#fullHeightModalRight').modal('hide');
+                document.forms.namedItem("EditTask").reset();
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    getUser() {
         $.ajax({
             url: '/Account/GetUser',
             type: 'GET',
             success: function (User) {
-               console.log(User);
+                console.log(User);
 
                 let accountForm = document.forms.namedItem("AccountSettings");
                 accountForm["UserAccountId"].value = User.userAccountId;
@@ -603,6 +687,49 @@ class ModalService {
         document.querySelector(".categoriesName").innerHTML = linkName;
         document.querySelector(".AddTask").style.display = "block";
     }
+    showAccountTab(e) {
+
+    let link = e.target;
+
+    if (!link.classList.contains('setting-list-item')) {
+        return;
+    }
+
+    let linkName = link.dataset.name;
+
+    document.querySelectorAll('.setting-tab-pane, .setting-list-item').forEach(el => {
+        el.classList.remove("active");
+    });
+    link.classList.add("active");
+    document.querySelector(`.setting-tab-pane[id=${linkName}]`).classList.add("active");
+
+    }
+
+    showTaskModal(e) {
+
+    let taskName = document.querySelector("#taskName");
+    let taskNote = document.querySelector("#note");
+    let taskDate = document.querySelector("#date-picker");
+    let taskTime = document.querySelector("#input_starttime");
+
+    let currentTaskItem = e.target;
+    let currentTaskName = currentTaskItem.getAttribute("data-value");
+    let currentTaskId = currentTaskItem.getAttribute("data-id");
+    let currentTaskNote = currentTaskItem.getAttribute("data-note");
+    let currentTaskDate = currentTaskItem.getAttribute("data-date");
+    let currentTaskTime = currentTaskItem.getAttribute("data-time");
+
+    if (!currentTaskItem.classList.contains('task-item')) {
+        return;
+    }
+
+    $('#fullHeightModalRight').modal('show');
+    taskName.value = currentTaskName;
+    taskDate.value = currentTaskDate;
+    taskTime.value = currentTaskTime;
+    taskNote.innerHTML = currentTaskNote;
+    taskName.setAttribute("data-id", currentTaskId);
+}
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (ModalService);
@@ -629,7 +756,6 @@ class RenderService {
             categoryName: document.querySelector("#createList").value.toString().trim(),
            
         };
-        console.log("Categpryu: "+ category);
 
         const listForm = document.querySelector("#ListForm");
         let categoryName = document.querySelector("#createList");
@@ -644,7 +770,7 @@ class RenderService {
             let Tab = new _modal_service__WEBPACK_IMPORTED_MODULE_0__["default"]().Tabs();
 
             // render
-            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, newId, 0));
+            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, newId, category.taskCounts));
             Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, newId));
 
             //delete active class
@@ -894,6 +1020,279 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
+
+/***/ }),
+
+/***/ "./node_modules/setimmediate/setImmediate.js":
+/*!***************************************************!*\
+  !*** ./node_modules/setimmediate/setImmediate.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./node_modules/timers-browserify/main.js":
+/*!************************************************!*\
+  !*** ./node_modules/timers-browserify/main.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+            (typeof self !== "undefined" && self) ||
+            window;
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(scope, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(/*! setimmediate */ "./node_modules/setimmediate/setImmediate.js");
+// On some exotic environments, it's not clear which object `setimmediate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -1659,6 +2058,37 @@ function callbackify(original) {
 exports.callbackify = callbackify;
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./node_modules/webpack/buildin/global.js":
+/*!***********************************!*\
+  !*** (webpack)/buildin/global.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
 
 /***/ })
 

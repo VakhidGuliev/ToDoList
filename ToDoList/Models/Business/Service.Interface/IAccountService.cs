@@ -1,11 +1,11 @@
-﻿using ToDoList.Models.Business.Entites;
+﻿using System.Threading.Tasks;
 
 namespace ToDoList.Models.Business.Service.Interface
 {
         
     public interface IAccountService
     {
-        User InsertToAccount(string email, string password);
+        Task<int> SetUserAccountId(string email, string password);
     }
 
 }

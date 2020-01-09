@@ -6,18 +6,16 @@
 
     public interface IDataTaskService
     {
-
         Task<List<Task>> GetTaskList(int userAccountId);
-        
-        Task GetTask(int id); 
+
+        Task<Task> GetTask(int id);
 
         void CreateTask(Task item);
 
-        Task<Task> UpdateTask(Task item);
+        Task<Task> UpdateTask(Task task);
 
         void DeleteTask(int id);
 
-        int Count();
-   
+        Task<int> TaskCount(int categoryId);
     }
 }

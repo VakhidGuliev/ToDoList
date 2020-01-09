@@ -107,7 +107,7 @@ class ApiService {
                         const objs = array[value];
                         index = objs.id;
 
-                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, 0));
+                        Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(objs.name, index, objs.taskCounts));
                         Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(objs.name, index));
 
                         Tab.listContainer.querySelectorAll("a").forEach(value => value.classList.remove("active"));
@@ -132,14 +132,14 @@ class ApiService {
             url: '/Home/TaskList',
             type: 'GET',
             success: function (data) {
-                
-                for (const tasks in data){
+
+                for (const tasks in data) {
                     const task = data[tasks];
-                   document.querySelectorAll(`.tab-content .tab-pane`).forEach((value, key, parent) => {
+                    document.querySelectorAll(`.tab-content .tab-pane`).forEach((value, key, parent) => {
                         if (value.dataset.id === `${task.categoryId}`) {
-                            
+
                             let template = `
-                                    <li class="task-item list-group-item list-group-item-light" data-value="${task.name}">
+                                    <li class="task-item list-group-item list-group-item-light" data-id="${task.id}" data-note="${task.note}" data-date="${task.durationDate}" data-time="${task.durationTime}" data-value="${task.name}">
                                     <input type="checkbox" class="isMarked" title="Mark as completed">
                                     <span class="task-name" title="Edit Task">${task.name}</span>
                                     <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
@@ -162,20 +162,72 @@ class ApiService {
             type: 'POST',
             data: data,
             success: function () {
-                console.log("задача создана");
+
+                let template = `
+               <li class="task-item list-group-item list-group-item-light" data-id="${data.Id}" data-value="${data.Name}">
+                    <input type="checkbox" class="isMarked" title="Mark as completed">
+                    <span class="task-name" title="Edit Task">${data.Name}</span>
+                    <span class="deleteTask" title="Delete Task"><i class="fa fa-trash btn_delete"></i></span>
+               </li>`;
+
+                document.querySelector(".tab-pane.active").insertAdjacentHTML("afterbegin", template);
+                $("form[name='AddTask']").find("input#name").val("");
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText)
             }
         });
     }
-    
-    getUser(){
+
+    deleteTask(id) {
+        $.ajax({
+            url: '/Home/DeleteTask',
+            type: 'DELETE',
+            data: {Id: id},
+            dataType: 'html',
+            success: function () {
+
+                $(`li.task-item[data-id='${id}']`).remove();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    updateTask(newData) {
+        $.ajax({
+            url: '/Home/UpdateTask',
+            type: 'PUT',
+            data: newData,
+            success: function (newData) {
+                
+                let taskName = document.querySelector("#taskName");
+                let taskNote = document.querySelector("#note");
+                let taskDate = document.querySelector("#date-picker");
+                let taskTime = document.querySelector("#input_starttime");
+
+                taskName.value = newData.Name;
+                taskDate.value = newData.DurationDate;
+                taskTime.value = newData.DurationTime;
+                taskNote.innerHTML = newData.Note;
+
+                $('#fullHeightModalRight').modal('hide');
+                document.forms.namedItem("EditTask").reset();
+
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                console.log(xhr)
+            }
+        });
+    }
+
+    getUser() {
         $.ajax({
             url: '/Account/GetUser',
             type: 'GET',
             success: function (User) {
-               console.log(User);
+                console.log(User);
 
                 let accountForm = document.forms.namedItem("AccountSettings");
                 accountForm["UserAccountId"].value = User.userAccountId;

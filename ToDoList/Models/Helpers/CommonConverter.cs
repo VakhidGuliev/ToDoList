@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using ToDoList.Models.Business.Entites;
-
-namespace ToDoList.Models.Helpers
+﻿namespace ToDoList.Models.Helpers
 {
+    using System;
+    using ToDoList.Models.Business.Entites;
+    using EmailSetting = DataAccess.Dal.Entites.EmailSetting;
+
     public class CommonConverter
     {
-
-
-
         public static User FromDalToBl(DataAccess.Dal.Entites.User user)
         {
-
             var obj = new User
             {
                 Email = user.Email,
@@ -22,18 +18,15 @@ namespace ToDoList.Models.Helpers
                 Password = user.Password,
                 ConfirmPassword = user.ConfirmPassword,
                 UserAccountId = user.UserAccountId,
-                Phone = user.Phone
+                Phone = user.Phone,
 
             };
 
-
-
-
             return obj;
         }
+
         public static DataAccess.Dal.Entites.User FromBlToDal(User user)
         {
-
             var obj = new DataAccess.Dal.Entites.User
             {
                 Email = user.Email,
@@ -44,15 +37,14 @@ namespace ToDoList.Models.Helpers
                 Password = user.Password,
                 ConfirmPassword = user.ConfirmPassword,
                 UserAccountId = new Random().Next(1, (int)1e+6) + 1,
-                Phone = user.Phone
-
+                Phone = user.Phone,
             };
 
             return obj;
         }
+
         public static Category FromDalToBl(DataAccess.Dal.Entites.Category category)
         {
-
             var obj =
 
               new Category
@@ -60,9 +52,8 @@ namespace ToDoList.Models.Helpers
 
                   Id = category.Id,
                   Name = category.Name,
-                  UserAccountId = category.UserAccountId
-
-
+                  UserAccountId = category.UserAccountId,
+                  TaskCounts = category.TaskCounts,
               };
 
             return obj;
@@ -75,7 +66,8 @@ namespace ToDoList.Models.Helpers
             {
                 Id = category.Id,
                 Name = category.Name,
-                UserAccountId = category.UserAccountId
+                UserAccountId = category.UserAccountId,
+                TaskCounts = category.TaskCounts,
 
             };
             return obj;
@@ -88,7 +80,11 @@ namespace ToDoList.Models.Helpers
               Name = task.Name,
               CategoryId = task.CategoryId,
               CreateTime = DateTime.Now,
-              UserAccountId = task.UserAccountId
+              UserAccountId = task.UserAccountId,
+              Note = task.Note,
+              DurationDate = task.DurationDate,
+              DurationTime = task.DurationTime,
+
           };
 
         public static DataAccess.Dal.Entites.Task FromBlToDal(Task task) =>
@@ -98,16 +94,19 @@ namespace ToDoList.Models.Helpers
                Name = task.Name,
                CategoryId = task.CategoryId,
                CreateTime = DateTime.Now,
-               UserAccountId = task.UserAccountId
-
+               UserAccountId = task.UserAccountId,
+               Note = task.Note,
+               DurationDate = task.DurationDate,
+               DurationTime = task.DurationTime,
            };
+
         public static AppRole FromDalToBl(DataAccess.Dal.Entites.AppRole appRole) =>
           new AppRole
           {
               Name = appRole.Role,
               Email = appRole.Role,
               Role = appRole.Role,
-              Password = appRole.Password
+              Password = appRole.Password,
           };
 
         public static DataAccess.Dal.Entites.AppRole FromBlToDal(AppRole appRole) =>
@@ -116,25 +115,10 @@ namespace ToDoList.Models.Helpers
             Name = appRole.Role,
             Email = appRole.Role,
             Role = appRole.Role,
-            Password = appRole.Password
+            Password = appRole.Password,
         };
 
-
-        public static DataAccess.Dal.Entites.EmailSetting FromBlToDal(EmailSetting emailSetting) =>
-          new DataAccess.Dal.Entites.EmailSetting
-          {
-              MailPort = emailSetting.MailPort,
-              MailServer = emailSetting.MailServer,
-              Message = emailSetting.Message,
-              SenderName = emailSetting.SenderName,
-              Sender = emailSetting.Sender,
-              TimeSender = emailSetting.TimeSender,
-              To = emailSetting.To,
-              Subject = emailSetting.Subject,
-              Password = emailSetting.Password
-          };
-
-        public static EmailSetting FromDalToBl(DataAccess.Dal.Entites.EmailSetting emailSetting) =>
+        public static EmailSetting FromBlToDal(Business.Entites.EmailSetting emailSetting) =>
           new EmailSetting
           {
               MailPort = emailSetting.MailPort,
@@ -145,7 +129,21 @@ namespace ToDoList.Models.Helpers
               TimeSender = emailSetting.TimeSender,
               To = emailSetting.To,
               Subject = emailSetting.Subject,
-              Password = emailSetting.Password
+              Password = emailSetting.Password,
+          };
+
+        public static Business.Entites.EmailSetting FromDalToBl(EmailSetting emailSetting) =>
+          new Business.Entites.EmailSetting
+          {
+              MailPort = emailSetting.MailPort,
+              MailServer = emailSetting.MailServer,
+              Message = emailSetting.Message,
+              SenderName = emailSetting.SenderName,
+              Sender = emailSetting.Sender,
+              TimeSender = emailSetting.TimeSender,
+              To = emailSetting.To,
+              Subject = emailSetting.Subject,
+              Password = emailSetting.Password,
           };
 
         // Not using

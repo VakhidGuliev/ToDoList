@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ToDoList.Models.Business.Entites
 {
     public class Category
@@ -10,6 +8,6 @@ namespace ToDoList.Models.Business.Entites
 
         public string Name { get; set; }
 
-        public List<Task> Tasks;
+        public int TaskCounts { get; set; }
     }
 }

@@ -1,25 +1,26 @@
 ﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
-
+    using System;
+    using System.Threading.Tasks;
+    using MailKit.Net.Smtp;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Options;
     using MimeKit;
-    using System;
     using ToDoList.Models.DataAccess.Dal.Entites;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
 
-    public class DataEmailSenderService : IDataEmailService 
+    public class DataEmailSenderService : IDataEmailService
     {
         private readonly EmailSetting _emailSettings;
         private readonly IHostingEnvironment _env;
-      
+
         public DataEmailSenderService(IOptions<EmailSetting> emailSettings, IHostingEnvironment env)
         {
             _emailSettings = emailSettings.Value;
-            _env = env;
-
+            this._env = env;
         }
-        public async System.Threading.Tasks.Task<string> SendEmailAsync(string email, string subject, string message)
+
+        public async Task<string> SendEmailAsync(string email, string subject, string message)
         {
             try
             {
@@ -37,17 +38,15 @@
 
                     mimeMessage.Body = new TextPart("html")
                     {
-                        Text = message
+                        Text = message,
                     };
-                 
 
-
-                    using (var client = new MailKit.Net.Smtp.SmtpClient())
+                    using (var client = new SmtpClient())
                     {
 
                         client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-                        if (_env.IsDevelopment())
+                        if (this._env.IsDevelopment())
                         {
                           await client.ConnectAsync(_emailSettings.MailServer, _emailSettings.MailPort, true);
                         }
@@ -62,20 +61,20 @@
 
                         await client.DisconnectAsync(true);
                     }
-                  return  status = "Ok";
-                }
-                else
-                {
-                    status = "Not Found";
 
-                    return  status;
+                    return status = "Ok";
                 }
+
+                status = "Not Found";
+
+                return status;
             }
             catch (Exception ex)
             {
                 throw new InvalidOperationException(ex.Message);
             }
         }
+
         public EmailSetting GetEmailSettings()
         {
            return _emailSettings;

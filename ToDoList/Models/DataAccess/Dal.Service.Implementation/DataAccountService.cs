@@ -1,59 +1,31 @@
 ﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
+    using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
     using ToDoList.Models.DataAccess.Data;
-    using System.Linq;
-    using ToDoList.Models.DataAccess.Dal.Entites;
-    using Microsoft.AspNetCore.Http;
-    using System.Security.Claims;
 
     public class DataAccountService : IDataAccountService
     {
-        public static int UserId = 0;
+        public static int UserId;
         private readonly string _connectionString;
 
         public DataAccountService(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DataToDoListContext");
+            this._connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
 
-       
-
-        public int GetUserAccountId()
+        public async Task<int> SetUserAccountId(string email, string password)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public User InsertToAccount(string email, string password)
-        {
-              using (var db = new DataToDoListContext(Options()))
+            using (var db = new DataToDoListContext(this.Options()))
             {
-                var getAccoundUser = db.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
-                return getAccoundUser;
-
-            }
-            
-         
-        }
-        public int  SetUserAccountId(string email, string password)
-        {
-            using (var db = new DataToDoListContext(Options()))
-            {
-                var getAccoundUser = db.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefault();
+                var getAccoundUser = await db.Users.Where(x => x.Email == email && x.Password == password).FirstOrDefaultAsync();
                 UserId = getAccoundUser.UserAccountId;
                 return getAccoundUser.UserAccountId;
-
             }
-
-
         }
-
-            
-        
-
-
 
         private DbContextOptions<DataToDoListContext> Options()
         {

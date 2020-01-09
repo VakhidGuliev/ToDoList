@@ -10,8 +10,8 @@ using ToDoList.Models.DataAccess.Data;
 namespace ToDoList.Migrations
 {
     [DbContext(typeof(DataToDoListContext))]
-    [Migration("20191228093918_InitialCreate40")]
-    partial class InitialCreate40
+    [Migration("20200106091716_init71")]
+    partial class init71
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,17 +20,6 @@ namespace ToDoList.Migrations
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.Account", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Accounts");
-                });
 
             modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.AppRole", b =>
                 {
@@ -41,6 +30,12 @@ namespace ToDoList.Migrations
                     b.Property<string>("Email");
 
                     b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Password")
+                        .IsRequired();
+
+                    b.Property<string>("Role")
                         .IsRequired();
 
                     b.HasKey("Id");
@@ -57,7 +52,9 @@ namespace ToDoList.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
-                    b.Property<int>("UserAccountid");
+                    b.Property<int>("TaskCounts");
+
+                    b.Property<int>("UserAccountId");
 
                     b.HasKey("Id");
 
@@ -79,6 +76,8 @@ namespace ToDoList.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<int>("UserAccountId");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tasks");
@@ -89,10 +88,6 @@ namespace ToDoList.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AccoundId");
-
-                    b.Property<int?>("AccountId");
 
                     b.Property<int>("Age");
 
@@ -118,18 +113,13 @@ namespace ToDoList.Migrations
                         .IsRequired()
                         .HasMaxLength(30);
 
+                    b.Property<int>("Phone");
+
+                    b.Property<int>("UserAccountId");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("ToDoList.Models.DataAccess.Dal.Entites.User", b =>
-                {
-                    b.HasOne("ToDoList.Models.DataAccess.Dal.Entites.Account")
-                        .WithMany("User")
-                        .HasForeignKey("AccountId");
                 });
 #pragma warning restore 612, 618
         }

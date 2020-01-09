@@ -1,13 +1,12 @@
 ﻿namespace ToDoList.Models.Business.Service.Implementation
 {
-
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Interface;
     using System.Threading.Tasks;
+    using ToDoList.Models.Business.Service.Interface;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
     using ToDoList.Models.Helpers;
+    using Task = Entites.Task;
 
     public class TaskService : ITaskService
     {
@@ -18,42 +17,37 @@
             _dataTaskService = dataTaskService;
         }
 
-        public int Count()
-        {
-          return  _dataTaskService.Count();
-        }
-
-        public async void CreateTask(Entites.Task item)
+        public async void CreateTask(Task item)
         {
            var convert = CommonConverter.FromBlToDal(item);
 
-           await Task.Run(() => _dataTaskService.CreateTask(convert));
+           await System.Threading.Tasks.Task.Run(() => _dataTaskService.CreateTask(convert));
         }
 
-        public void DeleteTask(int id)
+        public async void DeleteTask(int id)
         {
-            throw new NotImplementedException();
+            await System.Threading.Tasks.Task.Run(() => _dataTaskService.DeleteTask(id));
         }
 
-        public void GetCategoryTasksCount()
+        public async Task<Task> GetTask(int id)
         {
-            throw new NotImplementedException();
+            var task = _dataTaskService.GetTask(id).Result;
+            CommonConverter.FromDalToBl(task);
+            var res = await System.Threading.Tasks.Task.Run(() => _dataTaskService.GetTask(id));
+            return await System.Threading.Tasks.Task.Run(()=> CommonConverter.FromDalToBl(res));
         }
 
-        public Entites.Task GetTask(int id)
+        /// <inheritdoc/>
+        public async Task<List<Task>> GetTaskList(int userAccountId)
         {
-            throw new NotImplementedException();
+            return await System.Threading.Tasks.Task.Run(() => _dataTaskService.GetTaskList(userAccountId).Result.Select(CommonConverter.FromDalToBl).ToList());
         }
 
-        public async Task<List<Entites.Task>> GetTaskList(int userAccountId)
+        public async Task<Task> UpdateTask(Task item)
         {
-            return await Task.Run(() => _dataTaskService.GetTaskList(userAccountId).Result.Select(CommonConverter.FromDalToBl).ToList());
+            DataAccess.Dal.Entites.Task convertTask = CommonConverter.FromBlToDal(item);
+            DataAccess.Dal.Entites.Task res = await _dataTaskService.UpdateTask(convertTask);
+            return await System.Threading.Tasks.Task.Run(() => CommonConverter.FromDalToBl(res));
         }
-
-        public void UpdateTask(Entites.Task item)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ToDoList.Models.Business.Entites;
-using ToDoList.Models.Business.Service.Interface;
-using ToDoList.Models.DataAccess.Dal.Service.Interface;
-using ToDoList.Models.Helpers;
-using Task = System.Threading.Tasks.Task;
-
-namespace ToDoList.Models.Business.Service.Implementation
+﻿namespace ToDoList.Models.Business.Service.Implementation
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using ToDoList.Models.Business.Entites;
+    using ToDoList.Models.Business.Service.Interface;
+    using ToDoList.Models.DataAccess.Dal.Service.Interface;
+    using ToDoList.Models.Helpers;
+    using Task = System.Threading.Tasks.Task;
+
     public class CategoryService : ICategoryService
     {
         private readonly IDataCategoryService _dataCategoryService;
@@ -18,31 +18,28 @@ namespace ToDoList.Models.Business.Service.Implementation
             _dataCategoryService = dataCategoryService;
         }
 
-        public bool CreateCategory(Category category)
+        public async Task<bool> CreateCategory(Category category)
         {
             var convert = CommonConverter.FromBlToDal(category);
-            return _dataCategoryService.CreateCategory(convert);
+            return await Task.Run(()=> _dataCategoryService.CreateCategory(convert));
         }
 
-        public List<Category> Categories(int? userAccountId) =>
-            _dataCategoryService.Categories(userAccountId).Select(CommonConverter.FromDalToBl).ToList();
-          
-          public async void DeleteCategory(int? id)
-        {
-           await Task.Run(()=>_dataCategoryService.DeleteCategory(id));
+        public async Task<List<Category>> CategoriesAsync(int? userAccountId) {
+
+           return await Task.Run(() => _dataCategoryService.Categories(userAccountId).Result.Select(CommonConverter.FromDalToBl).ToList());
         }
 
- 
-       
-        Category ICategoryService.UpdateCategory(Category category, int userAccountId)
+        /// <inheritdoc/>
+        public async void DeleteCategory(int? id)
         {
-            DataAccess.Dal.Entites.Category convert = CommonConverter.FromBlToDal(category);
-            return CommonConverter.FromDalToBl(_dataCategoryService.UpdateCategory(convert));
+            await Task.Run(() => _dataCategoryService.DeleteCategory(id));
         }
 
-        public int Count(int userAccountId)
+        public async Task<Category> UpdateCategory(Category category)
         {
-           return _dataCategoryService.Count(userAccountId);
+            DataAccess.Dal.Entites.Category convertCategory = CommonConverter.FromBlToDal(category);
+            DataAccess.Dal.Entites.Category res = await _dataCategoryService.UpdateCategory(convertCategory);
+            return await Task.Run(() => CommonConverter.FromDalToBl(res));
         }
     }
 }

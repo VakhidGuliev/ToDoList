@@ -2,7 +2,7 @@
 {
     using Microsoft.EntityFrameworkCore;
     using ToDoList.Models.DataAccess.Dal.Entites;
-    
+
     #region DataToDoListContext
     public class DataToDoListContext : DbContext
     {

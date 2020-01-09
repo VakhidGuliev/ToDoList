@@ -8,7 +8,6 @@ class RenderService {
             categoryName: document.querySelector("#createList").value.toString().trim(),
            
         };
-        console.log("Categpryu: "+ category);
 
         const listForm = document.querySelector("#ListForm");
         let categoryName = document.querySelector("#createList");
@@ -23,7 +22,7 @@ class RenderService {
             let Tab = new ModalService().Tabs();
 
             // render
-            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, newId, 0));
+            Tab.listContainer.insertAdjacentHTML("beforeend", Tab.renderLists(category.categoryName, newId, category.taskCounts));
             Tab.tabContainer.insertAdjacentHTML("beforeend", Tab.renderTabs(category.categoryName, newId));
 
             //delete active class

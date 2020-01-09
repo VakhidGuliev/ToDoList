@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using ToDoList.Models.Business.Entites;
-
-namespace ToDoList.Models.Business.Service.Interface
+﻿namespace ToDoList.Models.Business.Service.Interface
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using ToDoList.Models.Business.Entites;
+
     public interface IUserService
     {
            void Create(User authUser);
 
-           Task <List<User>> GetRegistrationUsers();
-           User GetUser(string email);
-           string RegUserEmail();
+           Task<List<User>> GetRegistrationUsers();
+
+           Task<User> GetUser(string email);
     }
 }

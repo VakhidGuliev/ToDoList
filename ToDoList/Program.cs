@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-
-namespace ToDoList
+﻿namespace ToDoList
 {
-    #region Program
+    using Microsoft.AspNetCore;
+    using Microsoft.AspNetCore.Hosting;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -11,9 +10,8 @@ namespace ToDoList
            CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
     }
-    #endregion
 }

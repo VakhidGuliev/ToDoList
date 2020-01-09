@@ -20,28 +20,22 @@
 
         public async void Create(User authUser)
         {
-              DataAccess.Dal.Entites.User convert = CommonConverter.FromBlToDal(authUser);
+              var convert = CommonConverter.FromBlToDal(authUser);
 
-              await Task.Run(()=>_dataUserService.Create(convert));
+              await Task.Run(() =>_dataUserService.Create(convert));
         }
 
         public async Task<List<User>> GetRegistrationUsers()
         {
-         return  await Task.Run(()=> _dataUserService.GetRegistrationUsers().Result.
-             Select(dbData => CommonConverter.FromDalToBl(dbData)).ToList());
+         return await Task.Run(() => _dataUserService.GetRegistrationUsers().Result.
+             Select(CommonConverter.FromDalToBl).ToList());
         }
 
-        public User GetUser(string email)
+        public async Task<User> GetUser(string email)
         {
-            DataAccess.Dal.Entites.User user = _dataUserService.GetUser(email);
-            
+            var user = await _dataUserService.GetUser(email);
+
             return CommonConverter.FromDalToBl(user);
-
         }
-
-        public string RegUserEmail() => _dataUserService.RegUserEmail();
-
-
-
     }
 }

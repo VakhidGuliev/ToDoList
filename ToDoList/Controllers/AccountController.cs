@@ -1,37 +1,30 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using ToDoList.Models.Business.Entites;
-using ToDoList.Models.Business.Service.Interface;
-using ToDoList.Models.DataAccess.Dal.Service.Interface;
-using ToDoList.Models.DataAccess.Data;
-using ToDoList.Models.Helpers;
-
-namespace ToDoList.Controllers
+﻿namespace ToDoList.Controllers
 {
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
+    using Microsoft.AspNetCore.Mvc;
+    using ToDoList.Models.Business.Entites;
+    using ToDoList.Models.Business.Service.Interface;
+    using ToDoList.Models.DataAccess.Dal.Service.Interface;
+    using ToDoList.Models.DataAccess.Data;
+    using ToDoList.Models.Helpers;
+    using Task = System.Threading.Tasks.Task;
+
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
-        private readonly IAppRole _appRole;
-        private readonly IAccountService _accountService;
         private readonly IDataAccountService _dataAccountService;
         private DataToDoListContext _doListContext;
 
-        private static string UserEmail{ get; set; }
-
-        public static int UserAccountId { get; set; }
-
-       public AccountController(IUserService userService,
-                                 IAppRole appRole,
+        public AccountController(IUserService userService,
                                  IAccountService accountService,
                                  IDataAccountService dataAccountService,
                                  DataToDoListContext doListContext)
         {
             _userService = userService;
-            _accountService = accountService;
-            _appRole = appRole;
             _dataAccountService = dataAccountService;
             _doListContext = doListContext;
         }
@@ -40,14 +33,13 @@ namespace ToDoList.Controllers
                View();
 
         [HttpPost]
-        public IActionResult CreateUser([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]User authUser)
+        public async Task<IActionResult> CreateUser([Bind("FirstName,LastName,Birthday,Email,Password,ConfirmPassword,Id")]User authUser)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-
-                    _userService.Create(authUser);
+                    await Task.Run(() => this._userService.Create(authUser));
                 }
             }
             catch (AppException ex)
@@ -59,75 +51,61 @@ namespace ToDoList.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string email, string password)
+        public async Task<IActionResult> Login(string email, string password)
         {
-           if (!ModelState.IsValid) return View();
-           
-            var userId =_dataAccountService.SetUserAccountId(email, password);
-        
-            if (userId==0) return View();
-            
-            var role = _appRole.SetRole(email, password).ToString();
-         
+            if (!ModelState.IsValid) return View();
+
+            var userId = await Task.Run(() => _dataAccountService.SetUserAccountId(email, password));
+
+            if (userId == 0) return View();
+
+            var isAdmin = _doListContext.Roles.Any(x => x.Email == email && x.Password == password);
+
             ClaimsIdentity identity = null;
 
             var isAuthenticated = false;
 
-            if (role.Equals("Admin"))
+            if (isAdmin)
             {
-                identity = new ClaimsIdentity(new[] {
+                identity = new ClaimsIdentity(
+                    new[]
+                    {
                   new Claim(ClaimTypes.Email, email),
-                  new Claim(ClaimTypes.Role, "Admin")
-              }, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                isAuthenticated = true;
-
-            }
-
-            if (!role.Equals("Admin"))
-            {
-                identity = new ClaimsIdentity(new[] {
-                  new Claim(ClaimTypes.Email, email),
-                  new Claim(ClaimTypes.Role, role)
-              }, CookieAuthenticationDefaults.AuthenticationScheme);
+                  new Claim(ClaimTypes.Role, "Admin"),
+                    }, CookieAuthenticationDefaults.AuthenticationScheme);
 
                 isAuthenticated = true;
             }
 
-            if (!isAuthenticated) return View();
+            if (!isAdmin)
+            {
+                identity = new ClaimsIdentity(
+                    new[] {
+                  new Claim(ClaimTypes.Email, email),
+                  new Claim(ClaimTypes.Role, "User"),
+              }, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                isAuthenticated = true;
+            }
+
+            if (!isAuthenticated)
+            {
+                return this.View();
+            }
+
             var principal = new ClaimsPrincipal(identity);
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-           return RedirectToAction("Index", "Home");
+            await this.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         public JsonResult GetUser()
         {
-            var mail = HttpContext.User.Claims.FirstOrDefault().Value;
-          
-            Models.DataAccess.Dal.Entites.User user = _doListContext.Users.FirstOrDefault(x => x.Email == mail);
+            var mail = HttpContext.User.Claims.FirstOrDefault()?.Value;
 
-            return  Json(user);
-        }
+            var user = _doListContext.Users.FirstOrDefault(x => x.Email == mail);
 
-           string  GetUserAccountEmail()
-        {
-
-            var email = HttpContext.User.Claims.FirstOrDefault().Value;
-
-            UserEmail = email;
-
-            return email;
-        }
-
-        int GetUserAccountId()
-        {
-
-            var getId = _doListContext.Users.FirstOrDefault(x => x.Email == GetUserAccountEmail()).UserAccountId;
-
-            UserAccountId = getId;
-
-            return getId;
+            return Json(user);
         }
 
         public IActionResult Login()
@@ -135,11 +113,10 @@ namespace ToDoList.Controllers
             return View();
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
-
     }
 }

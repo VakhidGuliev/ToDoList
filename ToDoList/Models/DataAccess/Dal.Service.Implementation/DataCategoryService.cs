@@ -9,18 +9,18 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
     using ToDoList.Models.DataAccess.Dal.Entites;
     using ToDoList.Models.DataAccess.Dal.Service.Interface;
     using ToDoList.Models.DataAccess.Data;
+    using Task = System.Threading.Tasks.Task;
 
     public class DataCategoryService : IDataCategoryService
     {
         private readonly string _connectionString;
-        //  private readonly IDataAppRole _dataAppRole;
-        private DataToDoListContext Context { get; }
+
+        private DataToDoListContext _context { get; }
 
         public DataCategoryService(IConfiguration configuration, DataToDoListContext context)
         {
-            Context = context;
+            _context = context;
             _connectionString = configuration.GetConnectionString("DataToDoListContext");
-            // _dataAppRole = dataAppRole;
         }
 
         private DbContextOptions<DataToDoListContext> Options()
@@ -31,15 +31,14 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             return options;
         }
 
-        public bool CreateCategory(Category category)
+        public async Task<bool> CreateCategory(Category category)
         {
 
             using (var db = new DataToDoListContext(Options()))
             {
-
-                User user = db.Users.FirstOrDefault(x => x.UserAccountId == category.UserAccountId);
+                User user = await db.Users.FirstOrDefaultAsync(x => x.UserAccountId == category.UserAccountId);
                 var isContains = false;
-                var names = db.Categories.Where(x => x.UserAccountId == category.UserAccountId).ToList();
+                var names = await db.Categories.Where(x => x.UserAccountId == category.UserAccountId).ToListAsync();
                 foreach (var item in names)
                 {
                     if (item.Name.Contains(category.Name))
@@ -47,12 +46,13 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
                         isContains = true;
                     }
                 }
-                var isChek = Categories(user.UserAccountId).FirstOrDefault(x => x.Name == category.Name);
-      
+
+                var isChek = Categories(user.UserAccountId).Result.FirstOrDefault(x => x.Name == category.Name);
+
                 if (!isContains)
                 {
                     db.Categories.Add(category);
-                    db.SaveChanges();
+                    await db.SaveChangesAsync();
                 }
                 else
                 {
@@ -63,81 +63,65 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
             return true;
         }
 
-        public List<Category> Categories(int? userAccountId)
+        public async void DeleteCategory(int? id)
         {
-             using (var db = new DataToDoListContext(Options()))
-                {
-                    User getUser = db.Users.FirstOrDefault(x => x.UserAccountId == userAccountId);
-
-                     List<Category> categories = new List<Category>();
-
-                    foreach (Category item in db.Categories.ToList())
-                    {
-                        if (item.UserAccountId == userAccountId)
-                        {
-                            categories.Add(item);
-                        }
-
-                    }
-                    
-                    return categories;
-                }
-        }
-         
-
-        
-
-
-
-        public Category UpdateCategory(Category category)
-        {
-            if (category.Name != null)
+            using (var db = new DataToDoListContext(Options()))
             {
-                using (var db = new DataToDoListContext(Options()))
+                var category = await db.Categories.FirstOrDefaultAsync(m => m.Id == id);
+
+                var tasks = db.Tasks.ToList();
+
+                if (tasks != null)
                 {
+                    foreach (var item in tasks)
+                    {
+                        if (category.Id == item.CategoryId)
+                        {
+                            db.Tasks.Remove(item);
+                        }
+                    }
 
-                    db.Categories.Update(category);
-                    db.SaveChangesAsync();
+                    db.Categories.Remove(category);
 
+                    await db.SaveChangesAsync();
                 }
             }
+        }
+
+        public async Task<Category> UpdateCategory(Category category)
+        {
+            if (category.Name == null)
+            {
+                return category;
+            }
+
+            using (var db = new DataToDoListContext(Options()))
+            {
+                db.Categories.Update(category);
+                await db.SaveChangesAsync();
+            }
+
             return category;
         }
 
-        public async void DeleteCategory(int? id)
-        {
-
-            using (var db = new DataToDoListContext(Options()))
-            {
-
-                var category = await db.Categories
-               .FirstOrDefaultAsync(m => m.Id == id);
-                db.Categories.Remove(category);
-                await db.SaveChangesAsync();
-
-            }
-
-        }
-
-        public int Count(int userAccountId)
+        public async Task<List<Category>> Categories(int? userAccountId)
         {
             using (var db = new DataToDoListContext(Options()))
             {
-                int count = 0;
+                User getUser = await db.Users.FirstOrDefaultAsync(x => x.UserAccountId == userAccountId);
 
-                Category cateories = db.Categories.FirstOrDefault(x => x.UserAccountId == userAccountId);
+                List<Category> categories = new List<Category>();
 
-                foreach (var item in db.Categories.ToList())
+                foreach (Category item in db.Categories.ToList())
                 {
-                    if (db.Categories.Contains(cateories))
+                    if (item.UserAccountId == userAccountId)
                     {
-                        ++count;
+                        categories.Add(item);
                     }
                 }
-                return count;
+
+                return await Task.Run(() => categories);
             }
         }
-
-
     }
 }

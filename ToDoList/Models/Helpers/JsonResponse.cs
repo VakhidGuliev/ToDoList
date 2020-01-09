@@ -1,7 +1,7 @@
-﻿namespace ToDoList.Models.Helpers
-{
-    using System;
+﻿using System;
 
+namespace ToDoList.Models.Helpers
+{
     public static class JsonResponse
     {
         public static string ToStr(this Json separator) => SeparateWord(separator);

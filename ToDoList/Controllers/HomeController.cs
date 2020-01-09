@@ -1,49 +1,50 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ToDoList.Models;
-using ToDoList.Models.Business.Entites;
-using ToDoList.Models.Business.Service.Interface;
-using ToDoList.Models.DataAccess.Dal.Service.Interface;
-using ToDoList.Models.DataAccess.Data;
-using Task = ToDoList.Models.Business.Entites.Task;
+﻿// <copyright file="HomeController.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace ToDoList.Controllers
 {
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
+    using ToDoList.Models;
+    using ToDoList.Models.Business.Entites;
+    using ToDoList.Models.Business.Service.Interface;
+    using ToDoList.Models.DataAccess.Dal.Service.Interface;
+    using ToDoList.Models.DataAccess.Data;
+    using Task = Models.Business.Entites.Task;
+
     public class HomeController : Controller
     {
-
         private readonly ICategoryService _categoryService;
         private readonly ITaskService _taskService;
         private readonly IEmailService _emailService;
         private readonly IDataAccountService _dataAccountService;
-        private DataToDoListContext _doListContext;
-        private int CategoryId { get; set; }
-        public string UserEmail { get; private set; }
-        public int UserAccountId { get; private set; }
+        private readonly DataToDoListContext _doListContext;
 
-        public HomeController
-            (
+        private int CategoryId { get; set; }
+
+        private string UserEmail { get; set; }
+
+        private int UserAccountId { get; set; }
+
+        public HomeController(
 
             ICategoryService categoryService,
             ITaskService taskService,
             IEmailService emailService,
             IDataAccountService dataAccountService,
-            DataToDoListContext dataToDoListContext
-           )
+            DataToDoListContext dataToDoListContext)
         {
-
             _categoryService = categoryService;
             _taskService = taskService;
             _emailService = emailService;
             _dataAccountService = dataAccountService;
             _doListContext = dataToDoListContext;
-
-
         }
 
         [Authorize(Roles = "Admin,User")]
@@ -53,38 +54,18 @@ namespace ToDoList.Controllers
             return View();
         }
 
-
-
-        //[HttpGet]
-
-        //public JsonResult EditCategory(string name, int? id)
-        //{
-        //    if (name == null)
-        //    {
-        //        return Json( ResponseResult.Json.NotFound.ToStr());
-        //    }
-
-        //    var category = _context.Categories.Find(name);
-
-        //    if (category == null)
-        //    {
-        //        return Json(Response().NotFound);
-        //    }
-
-        //    return Json(category);
-        //}
-
         [HttpPost]
 
-        public IActionResult CreateCategory(Category category)
+        public async Task<IActionResult> CreateCategory(Category category)
         {
             Regex reg = new Regex(@"^([\d.,-]+)$");
             bool isCheck;
 
-            CategoryId = category.Id;
+            this.CategoryId = category.Id;
+
             if (!reg.IsMatch(category.Name))
             {
-                isCheck = _categoryService.CreateCategory(category);
+                isCheck = await _categoryService.CreateCategory(category);
             }
             else
             {
@@ -101,97 +82,67 @@ namespace ToDoList.Controllers
 
         [HttpPut]
 
-        public JsonResult EditCategory(string name, int id, [Bind("Name")]Category category, int userAccoundId)
+        public async Task<JsonResult> EditCategory(Category category)
         {
-
-            if (name != category.Name)
+            category.UserAccountId=this.GetUserAccountId();
+            this.CategoryId = category.Id;
+            if (!this.ModelState.IsValid) return Json(category);
+            try
             {
-                return Json($"Name {category.Name}");
+                await System.Threading.Tasks.Task.Run(() => _categoryService.UpdateCategory(category));
             }
-
-            if (ModelState.IsValid)
+            catch (DbUpdateConcurrencyException)
             {
-                try
-                {
-                    category.Id = id;
-                    _categoryService.UpdateCategory(category, userAccoundId);
-
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-
-                    return Json($"Name {category.Name} Alread exist");
-
-
-                    throw;
-                }
+                return Json($"Name {category.Name} Already exist");
             }
 
             return Json(category);
         }
+
         [HttpGet]
-      //  [Route("{/CategoryList/{id}}")]
-        public JsonResult CategoryList()
+        public async Task <JsonResult> EditCategory(string name, int? id)
+        {
+            if (name == null)
+            {
+                return Json("Not Found");
+            }
+
+            var category =  await System.Threading.Tasks.Task.Run(()=> _doListContext.Categories.Find(name));
+            return category == null ? Json("Not Found") : Json(category);
+        }
+
+        [HttpDelete]
+
+        public async Task<JsonResult> DeleteCategory(int? id)
+        {
+            if (id == null)
+            {
+                return Json("Not Found");
+            }
+
+            await System.Threading.Tasks.Task.Run(() => _categoryService.DeleteCategory(id));
+
+            return Json("Task was Deleted");
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> CategoryList()
         {
             var userAccountId = GetUserAccountId();
-            return Json(_categoryService.Categories(userAccountId).ToList());
-        }
-        string GetUserAccountEmail()
-        {
-
-            var email = HttpContext.User.Claims.FirstOrDefault().Value;
-
-            UserEmail = email;
-
-            return email;
-        }
-
-        int GetUserAccountId()
-        {
-
-            var getId = _doListContext.Users.FirstOrDefault(x => x.Email == GetUserAccountEmail()).UserAccountId;
-
-            UserAccountId = getId;
-
-            return getId;
-        }
-        //[HttpDelete]
-
-        //public async Task<JsonResult> DeleteCategory(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return Json(Response().NotFound);
-        //    }
-
-        //    await System.Threading.Tasks.Task.Run(() => _dataCategoryService.DeleteCategory(id));
-
-        //    return Json(Response().WasDeleted);
-        //}
-
-        //private bool CategoryExist(string name)
-        //{
-        //    return _context.Categories.Any(e => e.Name == name);
-        //}
-
-        [HttpGet]
-
-        public int CategoryCount(int userAccountId)
-        {
-           return _categoryService.Count(userAccountId);
+            return await System.Threading.Tasks.Task.Run(()=>Json(_categoryService.CategoriesAsync(userAccountId).Result.ToList()));
         }
 
         [HttpPost]
 
-        public IActionResult CreateTask(Task task)
+        public async Task<IActionResult> CreateTask(Task task)
         {
             Regex reg = new Regex(@"^([\d.,-]+)$");
             task.UserAccountId = GetUserAccountId();
-          if (!reg.IsMatch(task.Name))
+            if (!reg.IsMatch(task.Name))
             {
-                _taskService.CreateTask(task);
+                await System.Threading.Tasks.Task.Run(()=>_taskService.CreateTask(task));
             }
-     
+
             return RedirectToAction("Index");
         }
 
@@ -199,26 +150,37 @@ namespace ToDoList.Controllers
 
         public async Task<JsonResult> DeleteTask(int id)
         {
-            await System.Threading.Tasks.Task.Run(() => _categoryService.DeleteCategory(id));
+            await System.Threading.Tasks.Task.Run(() => _taskService.DeleteTask(id));
 
             return Json("Was Deleted");
         }
 
         [HttpGet]
 
-        public JsonResult GetTask(int id)
+        public async Task<JsonResult> GetTask(int id)
         {
-            return Json(_taskService.GetTask(id));
+            return await System.Threading.Tasks.Task.Run(()=> Json(_taskService.GetTask(id)));
+        }
+
+        [HttpPut]
+        public async Task<JsonResult> UpdateTask( Task task)
+        {
+            if (task.Id == 0)
+            {
+                return Json("Not Found");
+            }
+
+            var taskResult = await System.Threading.Tasks.Task.Run(() => _taskService.UpdateTask(task));
+            return taskResult == null ? Json("Not Found") : Json(taskResult);
         }
 
         [HttpGet]
-       
-        public JsonResult TaskList()
+
+        public async Task<JsonResult> TaskList()
         {
-            return Json(_taskService.GetTaskList(GetUserAccountId()).Result.ToList());
+            return await System.Threading.Tasks.Task.Run(()=> Json(_taskService.GetTaskList(GetUserAccountId()).Result.ToList()));
         }
 
-      
         //[Required]
         //[BindProperty]
         //public string Email { get; set; }
@@ -241,21 +203,38 @@ namespace ToDoList.Controllers
         //    return RedirectToAction("Index");
         //}
 
+        private string GetUserAccountEmail()
+        {
+            var email = this.HttpContext.User.Claims.FirstOrDefault()?.Value;
+
+            this.UserEmail = email;
+
+            return email;
+        }
+
+        private int GetUserAccountId()
+        {
+            var getId = this._doListContext.Users.FirstOrDefault(x => x.Email == this.GetUserAccountEmail()).UserAccountId;
+
+            this.UserAccountId = getId;
+
+            return getId;
+        }
+
         [Authorize(Roles = "Admin")]
 
         public IActionResult Setting()
         {
-            return View();
+            return this.View();
         }
 
         public IActionResult Privacy()
         {
-            return View();
+            return this.View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 
-        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-
+        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
     }
 }

@@ -1,15 +1,9 @@
-﻿using ToDoList.Models.DataAccess.Dal.Entites;
-
-namespace ToDoList.Models.DataAccess.Dal.Service.Interface
+﻿namespace ToDoList.Models.DataAccess.Dal.Service.Interface
 {
+    using System.Threading.Tasks;
 
     public interface IDataAccountService
     {
-        User InsertToAccount(string email, string password);
-        int SetUserAccountId(string email, string password);
-        
- 
+        Task<int> SetUserAccountId(string email, string password);
     }
-   
-
 }

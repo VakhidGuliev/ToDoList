@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace ToDoList.Models.Business.Entites
+﻿namespace ToDoList.Models.Business.Entites
 {
+    using System;
+
     public class User
     {
         public string FirstName { get; set; }
@@ -18,9 +18,8 @@ namespace ToDoList.Models.Business.Entites
 
         public string ConfirmPassword { get; set; }
 
-        public  int UserAccountId { get; set; }
-        
+        public int UserAccountId { get; set; }
+
         public int Phone { get; set; }
-  
     }
 }

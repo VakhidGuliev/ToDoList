@@ -9,8 +9,7 @@
         void Create(User user);
 
         Task <List<User>> GetRegistrationUsers();
-        User GetUser(string email);
-        string RegUserEmail();
+
+        Task<User> GetUser(string email);
     }
- 
 }

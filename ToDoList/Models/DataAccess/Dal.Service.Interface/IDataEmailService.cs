@@ -6,6 +6,7 @@
     public interface IDataEmailService
     {
         Task<string> SendEmailAsync(string email, string subject, string message);
+
         EmailSetting GetEmailSettings();
     }
 }

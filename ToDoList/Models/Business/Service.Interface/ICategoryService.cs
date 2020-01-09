@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using ToDoList.Models.Business.Entites;
-
-namespace ToDoList.Models.Business.Service.Interface
+﻿namespace ToDoList.Models.Business.Service.Interface
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using ToDoList.Models.Business.Entites;
+
     public interface ICategoryService
     {
-        bool CreateCategory(Category category);
-        Category UpdateCategory(Category category, int userAccountId);
-        void DeleteCategory(int? id);
-        int Count(int userAccountId);
-        List<Category> Categories(int? userAccountId);
+         Task<bool> CreateCategory(Category category);
+
+         Task<Category> UpdateCategory(Category category);
+
+         void DeleteCategory(int? id);
+
+         Task<List<Category>> CategoriesAsync(int? userAccountId);
     }
 }

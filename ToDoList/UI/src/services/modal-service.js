@@ -99,6 +99,49 @@ class ModalService {
         document.querySelector(".categoriesName").innerHTML = linkName;
         document.querySelector(".AddTask").style.display = "block";
     }
+    showAccountTab(e) {
+
+    let link = e.target;
+
+    if (!link.classList.contains('setting-list-item')) {
+        return;
+    }
+
+    let linkName = link.dataset.name;
+
+    document.querySelectorAll('.setting-tab-pane, .setting-list-item').forEach(el => {
+        el.classList.remove("active");
+    });
+    link.classList.add("active");
+    document.querySelector(`.setting-tab-pane[id=${linkName}]`).classList.add("active");
+
+    }
+
+    showTaskModal(e) {
+
+    let taskName = document.querySelector("#taskName");
+    let taskNote = document.querySelector("#note");
+    let taskDate = document.querySelector("#date-picker");
+    let taskTime = document.querySelector("#input_starttime");
+
+    let currentTaskItem = e.target;
+    let currentTaskName = currentTaskItem.getAttribute("data-value");
+    let currentTaskId = currentTaskItem.getAttribute("data-id");
+    let currentTaskNote = currentTaskItem.getAttribute("data-note");
+    let currentTaskDate = currentTaskItem.getAttribute("data-date");
+    let currentTaskTime = currentTaskItem.getAttribute("data-time");
+
+    if (!currentTaskItem.classList.contains('task-item')) {
+        return;
+    }
+
+    $('#fullHeightModalRight').modal('show');
+    taskName.value = currentTaskName;
+    taskDate.value = currentTaskDate;
+    taskTime.value = currentTaskTime;
+    taskNote.innerHTML = currentTaskNote;
+    taskName.setAttribute("data-id", currentTaskId);
+}
 }
 
 export default ModalService;

@@ -1,21 +1,19 @@
-﻿using System.Collections.Generic;
-using ToDoList.Models.Business.Entites;
-
-namespace ToDoList.Models.Business.Service.Interface
+﻿namespace ToDoList.Models.Business.Service.Interface
 {
-   public interface ITaskService
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Task = Entites.Task;
+
+    public interface ITaskService
     {
-        System.Threading.Tasks.Task<List<Task>> GetTaskList(int userAccountId);
+        Task<List<Task>> GetTaskList(int userAccountId);
 
-        void GetCategoryTasksCount();
-
-        Task GetTask(int id);
+        Task <Task> GetTask(int id);
 
         void CreateTask(Task item);
 
-        void UpdateTask(Task item);
+        Task<Task> UpdateTask(Task item);
 
         void DeleteTask(int id);
-        int Count();
     }
 }

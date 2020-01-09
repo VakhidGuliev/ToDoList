@@ -6,15 +6,12 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Interface
 
     public interface IDataCategoryService
     {
-      bool CreateCategory(Category category);
+        Task<bool> CreateCategory(Category category);
 
-      Category UpdateCategory(Category category);
+        Task<Category> UpdateCategory(Category category);
 
-       void DeleteCategory(int? id);
+        Task<List<Category>> Categories(int? userAccountId);
 
-        int Count(int userAccountId);
-
-       List<Category> Categories(int? userAccountId);
+        void DeleteCategory(int? id);
     }
-  
 }

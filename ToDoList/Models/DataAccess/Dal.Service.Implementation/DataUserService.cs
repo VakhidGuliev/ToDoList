@@ -1,27 +1,22 @@
-﻿using System.Linq;
-
-namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
+﻿namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
 {
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
-    using Entites;
-    using Interface;
-    using Data;
-    using Helpers;
+    using ToDoList.Models.DataAccess.Dal.Entites;
+    using ToDoList.Models.DataAccess.Dal.Service.Interface;
+    using ToDoList.Models.DataAccess.Data;
+    using ToDoList.Models.Helpers;
 
     public class DataUserService : IDataUserService
     {
         private readonly string _connectionString;
-        
 
         public DataUserService(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DataToDoListContext");
         }
-
-    
 
         public async void Create(User user)
         {
@@ -31,57 +26,34 @@ namespace ToDoList.Models.DataAccess.Dal.Service.Implementation
                 {
                     throw new AppException("Password is required");
                 }
-                var res = db.Users.AnyAsync(x => x.Email == user.Email).Result;
+
+                var res = await db.Users.AnyAsync(x => x.Email == user.Email);
                 if (res)
                 {
                     throw new AppException("Email \"" + user.Email + "\" is already taken");
                 }
 
-                db.Users.Add(user);
-               await  db.SaveChangesAsync();
+                await db.Users.AddAsync(user);
+                await db.SaveChangesAsync();
             }
         }
 
-        /// <inheritdoc/>
         public async Task<List<User>> GetRegistrationUsers()
         {
             using (var db = new DataToDoListContext(Options()))
             {
                 return await db.Users.ToListAsync();
             }
-            
         }
 
-        public User GetUser(string email)
+        public async Task<User> GetUser(string email)
         {
             using (var db = new DataToDoListContext(Options()))
             {
-                var user = db.Users.FirstOrDefault(x => x.Email == email);
-                return  db.Users.FirstOrDefault(x=>x.Email ==email);
+                var user = await db.Users.FirstOrDefaultAsync(x => x.Email == email);
+                return await db.Users.FirstOrDefaultAsync(x => x.Email == email);
             }
-
-       
         }
-
-        public string RegUserEmail()
-        {
-            return null;
-        }
-
-
-//        public string RegUserEmail()
-//        {
-//          
-//            using (var db = new DataToDoListContext(Options()))
-//            {
-//                
-//             
-//
-//         
-//
-//
-//            }
-//        }
 
         private DbContextOptions<DataToDoListContext> Options()
         {

@@ -56,7 +56,7 @@ class CategoryController {
             e.preventDefault();
 
             
-            const categoryName = $("input[name='Name']").val();
+            const categoryName = $("input#editList").val();
             const id = $(".list-group-item-action.active").attr("data-id");
             
             new ApiService().editCategory(id,categoryName);

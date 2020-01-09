@@ -50,6 +50,8 @@ namespace ToDoList.Migrations
                     b.Property<string>("Name")
                         .IsRequired();
 
+                    b.Property<int>("TaskCounts");
+
                     b.Property<int>("UserAccountId");
 
                     b.HasKey("Id");
@@ -67,10 +69,16 @@ namespace ToDoList.Migrations
 
                     b.Property<DateTime>("CreateTime");
 
+                    b.Property<DateTime>("DurationDate");
+
                     b.Property<DateTime>("DurationTime");
+
+                    b.Property<bool>("Favorites");
 
                     b.Property<string>("Name")
                         .IsRequired();
+
+                    b.Property<string>("Note");
 
                     b.Property<int>("UserAccountId");
 
